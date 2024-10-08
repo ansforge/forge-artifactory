@@ -40,10 +40,10 @@ variable "datacenter" {
 
 variable "image" {
     type    = string
-    default = "postgres"
+    default = "mariadb"
 }
 
 variable "tag" {
     type    = string
-    default = "15.2"
+    default = "1O.2.33"
 }
