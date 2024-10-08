@@ -42,7 +42,7 @@ job "forge-artifactory" {
             driver = "docker"
 
             # log-shipper
-            leader = true
+            #leader = true
 
             template {
                 data = <<EOH
