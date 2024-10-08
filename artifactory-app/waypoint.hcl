@@ -62,7 +62,7 @@ variable "external_url_artifactory_hostname" {
 
 variable "NGINX_LOG_ROTATE_COUNT" {
     type    = int
-    default = 1
+    default = 100
 }
 
 variable "NGINX_LOG_ROTATE_SIZE" {
