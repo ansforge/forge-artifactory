@@ -48,7 +48,7 @@ POSTGRES_PASSWORD={{ .Data.data.psql_password }}
             config {
                 image   = "${image}:${tag}"
                 ports   = ["postgres"]
-                volumes = ["name=forge-artifactory-db,io_priority=high,size=25,repl=2:/var/lib/postgresql/data"]
+                volumes = ["name=forge-artifactory-db,io_priority=high,size=2,repl=2:/var/lib/postgresql/data"]
                 volume_driver = "pxd"
             }
             
