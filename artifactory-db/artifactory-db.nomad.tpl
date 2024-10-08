@@ -5,7 +5,7 @@ job "forge-artifactory-postgresql" {
         policies = ["forge"]
         change_mode = "restart"
     }
-    group "artifactory-postgresql" {
+    group "artifactory-mariadb" {
         count ="1"
         
         restart {
@@ -21,7 +21,7 @@ job "forge-artifactory-postgresql" {
         }
 
         network {
-            port "postgres" { to = 5432 }
+            port "mariadb" { to = 3306 }
         }
         
         task "postgres" {
@@ -34,9 +34,10 @@ job "forge-artifactory-postgresql" {
                 data = <<EOH
 
 {{ with secret "forge/artifactory" }}
-POSTGRES_DB = {{ .Data.data.db_name }}
-POSTGRES_USER={{ .Data.data.psql_username }}
-POSTGRES_PASSWORD={{ .Data.data.psql_password }}
+MARIADB_ROOT_PASSWORD = {{ .Data.data.root_password }}
+MARIADB_DB = {{ .Data.data.db_name }}
+MARIADB_USER={{ .Data.data.psql_username }}
+MARIADB_PASSWORD={{ .Data.data.psql_password }}
 {{ end }}
 
                 EOH
@@ -47,8 +48,8 @@ POSTGRES_PASSWORD={{ .Data.data.psql_password }}
 
             config {
                 image   = "${image}:${tag}"
-                ports   = ["postgres"]
-                volumes = ["name=forge-artifactory-db,io_priority=high,size=2,repl=2:/var/lib/postgresql/data"]
+                ports   = ["mariadb"]
+                volumes = ["name=forge-artifactory-db,io_priority=high,size=2,repl=2:/var/lib/mysql"]
                 volume_driver = "pxd"
             }
             
@@ -59,14 +60,14 @@ POSTGRES_PASSWORD={{ .Data.data.psql_password }}
             
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D"
-                port = "postgres"
-                tags = ["urlprefix-:5432 proto=tcp"]
+                port = "mariadb"
+                tags = ["urlprefix-:3306 proto=tcp"]
                 check {
                     name     = "alive"
                     type     = "tcp"
                     interval = "30s"
                     timeout  = "5s"
-                    port     = "postgres"
+                    port     = "mariadb"
                 }
             }
         }
