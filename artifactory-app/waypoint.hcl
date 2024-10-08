@@ -30,6 +30,8 @@ app "forge/artifactory-app" {
 			image_nginx = var.image_nginx
             datacenter = var.datacenter
             external_url_artifactory_hostname = var.external_url_artifactory_hostname
+            NGINX_LOG_ROTATE_COUNT = var.NGINX_LOG_ROTATE_COUNT
+            NGINX_LOG_ROTATE_SIZE = var.NGINX_LOG_ROTATE_SIZE
             })
         }
     }
