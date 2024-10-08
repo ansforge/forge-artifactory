@@ -66,7 +66,7 @@ EOH
             config {
                 extra_hosts = [ "jenkins.internal:$\u007Battr.unique.network.ip-address\u007D"
                               ]
-                image   = "${image}:${tag}.${tag_patch}${tag_suffixe}"
+                image   = "${image}:${tag}"
                 ports   = ["artifactory-http", "artifactory-entrypoints"]
                 volumes = ["name=forge-artifactory-data,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
@@ -123,7 +123,7 @@ EOH
             }
 
             config {
-                image   = "${image}:${tag}.${tag_patch}${tag_suffixe}"
+                image   = "${image_nginx}:${tag}"
                 ports   = ["artifactory-entrypoints"]
                 volumes = ["name=forge-nginx-data,io_priority=high,size=2,repl=2:/var/opt/jfrog/nginx"]
                 volume_driver = "pxd"
