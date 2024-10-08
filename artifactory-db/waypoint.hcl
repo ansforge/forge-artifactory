@@ -1,4 +1,4 @@
-project = "forge/sonarqube-db"
+project = "forge/artifactory-db"
 
 labels = { "domaine" = "forge" }
 
