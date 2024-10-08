@@ -60,3 +60,12 @@ variable "external_url_artifactory_hostname" {
     default = "repo.forge.asipsante.fr"
 }
 
+variable "NGINX_LOG_ROTATE_COUNT" {
+    type    = int
+    default = 1
+}
+
+variable "NGINX_LOG_ROTATE_SIZE" {
+    type    = string
+    default = "50M"
+}
