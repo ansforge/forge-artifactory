@@ -79,8 +79,7 @@ EOH
             
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D"
-                tags = ["urlprefix-${external_url_artifactory_hostname}/",
-                        "urlprefix-artifactory.internal/"
+                tags = ["urlprefix-artifactory.internal/"
                        ]
                 port = "artifactory"
                 check {
