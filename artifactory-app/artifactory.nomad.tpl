@@ -68,9 +68,7 @@ EOH
                               ]
                 image   = "${image}:${tag}.${tag_patch}${tag_suffixe}"
                 ports   = ["artifactory-http", "artifactory-entrypoints"]
-                volumes = ["name=forge-artifactory-data,io_priority=high,size=40,repl=2:/var/opt/jfrog/artifactory",
-                           "name=forge-artifactory-logs,io_priority=high,size=2,repl=2:/var/opt/jfrog/artifactory/var/log",
-                           "name=forge-artifactory-config,io_priority=high,size=2,repl=2:/var/opt/jfrog/artifactory/var/etc/artifactory"]
+                volumes = ["name=forge-artifactory-data,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
             }
 
@@ -108,6 +106,7 @@ ART_BASE_URL=http://localhost:8082
 NGINX_LOG_ROTATE_COUNT=${NGINX_LOG_ROTATE_COUNT}
 NGINX_LOG_ROTATE_SIZE=${NGINX_LOG_ROTATE_SIZE}
 SSL=true
+TZ="Europe/Paris"
 EOH
                 destination = "secrets/file.env"
                 change_mode = "restart"
@@ -126,8 +125,7 @@ EOH
             config {
                 image   = "${image}:${tag}.${tag_patch}${tag_suffixe}"
                 ports   = ["artifactory-entrypoints"]
-                volumes = ["name=forge-nginx-data,io_priority=high,size=2,repl=2:/var/opt/jfrog/nginx",
-                           "name=forge-nginx-logs,io_priority=high,size=2,repl=2:/var/opt/jfrog/nginx/log"]
+                volumes = ["name=forge-nginx-data,io_priority=high,size=2,repl=2:/var/opt/jfrog/nginx"]
                 volume_driver = "pxd"
             }
 
