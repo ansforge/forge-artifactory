@@ -1,4 +1,4 @@
-job "forge-artifactory-postgresql" {
+job "forge-artifactory-mariadb" {
     datacenters = ["${datacenter}"]
     type = "service"
     vault {
@@ -24,7 +24,7 @@ job "forge-artifactory-postgresql" {
             port "mariadb" { to = 3306 }
         }
         
-        task "postgres" {
+        task "mariadb" {
             driver = "docker"
 
             # log-shipper
