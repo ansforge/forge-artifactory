@@ -30,8 +30,6 @@ app "forge/artifactory-app" {
 			image_nginx = var.image_nginx
             datacenter = var.datacenter
             external_url_artifactory_hostname = var.external_url_artifactory_hostname
-            NGINX_LOG_ROTATE_COUNT = var.NGINX_LOG_ROTATE_COUNT
-            NGINX_LOG_ROTATE_SIZE = var.NGINX_LOG_ROTATE_SIZE
             })
         }
     }
@@ -60,14 +58,4 @@ variable "tag" {
 variable "external_url_artifactory_hostname" {
     type    = string
     default = "repo.forge.asipsante.fr"
-}
-
-variable "NGINX_LOG_ROTATE_COUNT" {
-    type    = string
-    default = "100"
-}
-
-variable "NGINX_LOG_ROTATE_SIZE" {
-    type    = string
-    default = "50M"
 }
