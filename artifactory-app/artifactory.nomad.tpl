@@ -18,7 +18,7 @@ job "forge-artifactory" {
         policies = ["forge","smtp"]
         change_mode = "restart"
     }
-    group "artifactory-server" {
+    group "artifactory" {
         count ="1"
         
         restart {
