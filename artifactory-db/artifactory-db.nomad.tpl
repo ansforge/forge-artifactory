@@ -61,7 +61,7 @@ MARIADB_PASSWORD={{ .Data.data.psql_password }}
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D"
                 port = "mariadb"
-                tags = ["urlprefix-:3306 proto=tcp"]
+                tags = ["urlprefix-:3307 proto=tcp"]
                 check {
                     name     = "alive"
                     type     = "tcp"
