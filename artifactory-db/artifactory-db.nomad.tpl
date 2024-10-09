@@ -34,10 +34,10 @@ job "forge-artifactory-mariadb" {
                 data = <<EOH
 
 {{ with secret "forge/artifactory" }}
-MYSQL_ROOT_PASSWORD = {{ .Data.data.root_password }}
-MYSQL_DB = {{ .Data.data.db_name }}
-MYSQL_USER={{ .Data.data.psql_username }}
-MYSQL_PASSWORD={{ .Data.data.psql_password }}
+MYSQL_ROOT_PASSWORD="{{ .Data.data.root_password }}"
+MYSQL_DB="{{ .Data.data.db_name }}"
+MYSQL_USER="{{ .Data.data.psql_username }}"
+MYSQL_PASSWORD="{{ .Data.data.psql_password }}"
 {{ end }}
 
                 EOH
