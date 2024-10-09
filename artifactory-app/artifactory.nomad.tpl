@@ -142,6 +142,16 @@ shared:
                     propagation = "rshared"
                    }
                 }
+
+               mount {
+                  type   = "bind"
+                  target = "/opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mariadb-java-client-2.7.1.jar"
+                  source = "local/mariadb-java-client-2.7.1.jar"
+                  bind_options {
+                    propagation = "rshared"
+                  }
+              }
+
             }
 
             resources {
