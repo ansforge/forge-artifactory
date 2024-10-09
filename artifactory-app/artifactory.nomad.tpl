@@ -44,6 +44,12 @@ job "forge-artifactory" {
             # log-shipper
             #leader = true
 
+        artifact {
+          source = "${repo_url}/artifactory/ext-release-local/org/mariadb/jdbc/mariadb-java-client/2.7.1/mariadb-java-client-2.7.1.jar"
+          options {
+            archive = false
+          }
+
             template {
                 data = <<EOH
 JF_ROUTER_ENTRYPOINTS_EXTERNALPORT="8082"
