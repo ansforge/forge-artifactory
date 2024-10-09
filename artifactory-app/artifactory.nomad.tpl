@@ -49,6 +49,7 @@ job "forge-artifactory" {
           options {
             archive = false
           }
+       }
 
             template {
                 data = <<EOH
