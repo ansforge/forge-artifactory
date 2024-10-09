@@ -30,6 +30,7 @@ app "forge/artifactory-app" {
 			image_nginx = var.image_nginx
             datacenter = var.datacenter
             external_url_artifactory_hostname = var.external_url_artifactory_hostname
+            repo_url = var.repo_url
             })
         }
     }
