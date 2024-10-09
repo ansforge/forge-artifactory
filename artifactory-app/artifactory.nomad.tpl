@@ -109,9 +109,11 @@ shared:
         ## Default Embedded derby
 
         driver: org.mariadb.jdbc.Driver
-        url: jdbc:mariadb://artifactory.db.internal:3306/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true&useSSL=false&useMysqlMetadata=true
+{{range service ( "forge-artifactory-mariadb") }}
+        url: jdbc:mariadb://{{.Address}}:{{.Port}}/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true&useSSL=false&useMysqlMetadata=true
+{{end}}
         username: artifactory
-        password: 
+        password: Password
 
                 EOH
             }
@@ -124,6 +126,16 @@ shared:
                 ports   = ["artifactory-http", "artifactory-entrypoints"]
                 volumes = ["name=forge-artifactory-data,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
+
+                mount {
+                  type     = "bind"
+                  target   = "/opt/jfrog/artifactory/var/etc/system.yaml"
+                  source   = "secrets/system.yaml"
+                  readonly = false
+                  bind_options {
+                    propagation = "rshared"
+                   }
+                }
             }
 
             resources {
