@@ -42,12 +42,12 @@ variable "datacenter" {
 
 variable "image" {
     type    = string
-    default = "artifactory-pro"
+    default = "jfrog/artifactory-pro"
 }
 
 variable "image_nginx" {
     type    = string
-    default = "nginx-artifactory-pro"
+    default = "jfrog/nginx-artifactory-pro"
 }
 
 variable "tag" {
