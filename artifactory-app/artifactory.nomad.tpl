@@ -117,7 +117,8 @@ shared:
             }
 
             config {
-                extra_hosts = [ "jenkins.internal:$\u007Battr.unique.network.ip-address\u007D"
+                extra_hosts = [ "artifactory.db.internal:$\u007BNOMAD_IP_http\u007D",
+                               "jenkins.internal:$\u007Battr.unique.network.ip-address\u007D"
                               ]
                 image   = "${image}:${tag}"
                 ports   = ["artifactory-http", "artifactory-entrypoints"]
