@@ -53,7 +53,7 @@ variable "image_nginx" {
 
 variable "tag" {
     type    = string
-    default = "7.90.13"
+    default = "7.63.14"
 }
 
 variable "external_url_artifactory_hostname" {
