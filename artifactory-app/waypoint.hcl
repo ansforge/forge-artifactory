@@ -59,3 +59,8 @@ variable "external_url_artifactory_hostname" {
     type    = string
     default = "repo.forge.asipsante.fr"
 }
+
+variable "repo_url" {
+    type    = string
+    default = "http://repo.proxy-dev-forge.asip.hst.fluxus.net"
+}
