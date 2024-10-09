@@ -131,7 +131,7 @@ shared:
                               ]
                 image   = "${image}:${tag}"
                 ports   = ["artifactory-http", "artifactory-entrypoints"]
-                volumes = ["name=forge-artifactory-data,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
+                volumes = ["name=forge-artifactory-data2,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
 
                 mount {
