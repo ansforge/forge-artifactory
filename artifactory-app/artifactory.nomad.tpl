@@ -1,4 +1,4 @@
-job "forge-artifactory" {
+job "forge-artifactory-app" {
     datacenters = ["${datacenter}"]
     type = "service"
 
