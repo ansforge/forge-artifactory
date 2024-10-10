@@ -38,7 +38,7 @@ job "forge-artifactory-nginx" {
 
             template {
                 data = <<EOH
-
+ART_BASE_URL="http://{{ range service "forge-artifactory-ep" }}{{ .Address }}:{{ .Port }}{{ end }}"
 NGINX_LOG_ROTATE_COUNT=7
 NGINX_LOG_ROTATE_SIZE=5M
 SSL=false
@@ -120,10 +120,6 @@ server {
                     propagation = "rshared"
                    }
                 }
-            }
-
-            env {
-                ART_BASE_URL="http://$\u007BNOMAD_HOST_ADDR_artifactory-entrypoints\u007D"
             }
 
             resources {
