@@ -132,7 +132,7 @@ server {
             }
 
             service {
-                name = "$\u007BNOMAD_JOB_NAME\u007D-nginx"
+                name = "$\u007BNOMAD_JOB_NAME\u007D"
                 tags = ["urlprefix-artifactory.nginx/"
                        ]
                 port = "artifactory-nginx-http"
