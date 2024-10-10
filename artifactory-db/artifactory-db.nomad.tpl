@@ -48,7 +48,7 @@ MYSQL_PASSWORD="{{ .Data.data.psql_password }}"
 
             config {
                 image   = "${image}:${tag}"
-                command = "--innodb_buffer_pool_size=1536M --tmp_table_size=512M --max_heap_table_size=512M --innodb_log_file_size=256M --innodb_log_buffer_size=4M"
+                command = "--max_allowed_packet=8M --innodb_buffer_pool_size=1536M --tmp_table_size=512M --max_heap_table_size=512M --innodb_log_file_size=256M --innodb_log_buffer_size=4M"
                 ports   = ["mariadb"]
                 volumes = ["name=forge-artifactory-db,io_priority=high,size=2,repl=2:/var/lib/mysql"]
                 volume_driver = "pxd"
