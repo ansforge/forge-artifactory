@@ -38,9 +38,9 @@ variable "datacenter" {
     default = "test"
 }
 
-variable "image_nginx" {
+variable "image" {
     type    = string
-    default = "jfrog/nginx-artifactory-pro"
+    default = "jfrog/artifactory-pro"
 }
 
 variable "tag" {
