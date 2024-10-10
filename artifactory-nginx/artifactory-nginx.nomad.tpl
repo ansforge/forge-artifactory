@@ -107,7 +107,6 @@ server {
             config {
                 image   = "${image}:${tag}"
                 ports   = ["artifactory-nginx-http","artifactory-nginx-https"]
-                extra_hosts = ["artifactory.internal artifactory.internal.ep:$\u007Battr.unique.network.ip-address\u007D"]
                 volumes = ["name=forge-artifactory-nginx-data,io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
                 volume_driver = "pxd"
 
@@ -129,7 +128,7 @@ server {
 
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D"
-                tags = ["urlprefix-artifactory.nginx/"
+                tags = ["urlprefix-rp.artifactory.internal/"
                        ]
                 port = "artifactory-nginx-http"
                 check {
