@@ -11,7 +11,7 @@ job "forge-artifactory-app" {
 
     vault {
         policies = ["forge","smtp"]
-        change_mode = "restart"
+        change_mode = "noop"
     }
     group "artifactory" {
         count ="1"
@@ -105,7 +105,7 @@ shared:
         url: jdbc:mariadb://{{.Address}}:{{.Port}}/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true&useSSL=false&useMysqlMetadata=true
 {{end}}
         username: {{ with secret "forge/artifactory" }}{{ .Data.data.psql_username }}{{ end }}
-        #password: {{ with secret "forge/artifactory" }}{{ .Data.data.psql_password_artifactory_encoded }}{{ end }}
+        #password: {{ with secret "forge/artifactory" }}{{ .Data.data.psql_password }}{{ end }}
 
                 EOH
             }
