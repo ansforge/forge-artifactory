@@ -16,7 +16,7 @@ app "forge/artifactory-nginx" {
 
     build {
         use "docker-pull" {
-            image_nginx = var.image_nginx
+            image = var.image
             tag   = var.tag
             disable_entrypoint = true
         }
@@ -26,7 +26,7 @@ app "forge/artifactory-nginx" {
         use "nomad-jobspec" {
             jobspec = templatefile("${path.app}/artifactory-nginx.nomad.tpl", {
             tag     = var.tag
-	    image_nginx = var.image_nginx
+	    image = var.image
             datacenter = var.datacenter
             external_url_artifactory_hostname = var.external_url_artifactory_hostname
             repo_url = var.repo_url
@@ -41,7 +41,7 @@ variable "datacenter" {
 }
 
 
-variable "image_nginx" {
+variable "image" {
     type    = string
     default = "jfrog/nginx-artifactory-pro"
 }
