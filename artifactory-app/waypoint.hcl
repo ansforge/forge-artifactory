@@ -26,6 +26,7 @@ app "forge/artifactory-app" {
         use "nomad-jobspec" {
             jobspec = templatefile("${path.app}/artifactory.nomad.tpl", {
             tag     = var.tag
+            image   = var.image
             datacenter = var.datacenter
             repo_url = var.repo_url
             })
