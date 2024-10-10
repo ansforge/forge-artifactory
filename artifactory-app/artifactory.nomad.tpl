@@ -40,46 +40,6 @@ job "forge-artifactory" {
             port "artifactory-nginx-https" { to = 443 }
         }
 
-        task "nginx" {
-            driver = "docker"
-
-            config {
-                image   = "${image_nginx}:${tag}"
-                ports   = ["artifactory-nginx-http","artifactory-nginx-https"]
-                volumes = ["name=forge-artifactory-nginx-data,io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
-                volume_driver = "pxd"
-            }
-
-            resources {
-                cpu    = 1000
-                memory = 2048
-            }
-
-            env {
-                ART_BASE_URL="http://localhost:8082"
-                NGINX_LOG_ROTATE_COUNT=7
-                NGINX_LOG_ROTATE_SIZE=5M
-                SSL=true
-                TZ="Europe/Paris"
-            }
-
-            service {
-                name = "$\u007BNOMAD_JOB_NAME\u007D-nginx"
-                tags = ["urlprefix-artifactory.nginx/"
-                       ]
-                port = "artifactory-nginx-http"
-                check {
-                    name     = "alive"
-                    type     = "tcp"
-                    interval = "120s" #60s
-                    timeout  = "5m" #10s
-                    failures_before_critical = 10 #5
-                    port     = "artifactory-nginx-http"
-                }
-            }
-            
-        }
-
 
         task "artifactory" {
             driver = "docker"
