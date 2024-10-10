@@ -54,7 +54,7 @@ job "forge-artifactory" {
             template {
                 data = <<EOH
 
-JF_ROUTER_ENTRYPOINTS_EXTERNALPORT="${NOMAD_PORT_artifactory-entrypoints}"
+JF_ROUTER_ENTRYPOINTS_EXTERNALPORT="$${NOMAD_PORT_artifactory-entrypoints}"
 TZ="Europe/Paris"
 EOH
                 destination = "secrets/file.env"
