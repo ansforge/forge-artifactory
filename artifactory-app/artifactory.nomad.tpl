@@ -66,6 +66,7 @@ EOH
                 change_mode = "restart"
                 perms = "777"
                 uid = 1030
+                gid = 1030
                 data = <<EOH
 ## @formatter:off
 ## JFROG ARTIFACTORY SYSTEM CONFIGURATION FILE
