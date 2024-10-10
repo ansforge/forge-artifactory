@@ -1,4 +1,4 @@
-project = "forge/artifactory"
+project = "forge/artifactory-nginx"
 
 labels = { "domaine" = "forge" }
 
@@ -7,12 +7,12 @@ runner {
     data_source "git" {
         url  = "https://github.com/ansforge/forge-artifactory.git"
         ref  = "var.datacenter"
-        path = "artifactory-app"
+        path = "artifactory-nginx"
         ignore_changes_outside_path = true
     }
 }
 
-app "forge/artifactory-app" {
+app "forge/artifactory-nginx" {
 
     build {
         use "docker-pull" {
@@ -24,10 +24,11 @@ app "forge/artifactory-app" {
 
     deploy{
         use "nomad-jobspec" {
-            jobspec = templatefile("${path.app}/artifactory.nomad.tpl", {
+            jobspec = templatefile("${path.app}/artifactory-nginx.nomad.tpl", {
             tag     = var.tag
-            image   = var.image
+	    image = var.image
             datacenter = var.datacenter
+            external_url_artifactory_hostname = var.external_url_artifactory_hostname
             repo_url = var.repo_url
             })
         }
@@ -39,14 +40,20 @@ variable "datacenter" {
     default = "test"
 }
 
+
 variable "image" {
     type    = string
-    default = "jfrog/artifactory-pro"
+    default = "jfrog/nginx-artifactory-pro"
 }
 
 variable "tag" {
     type    = string
     default = "7.63.14"
+}
+
+variable "external_url_artifactory_hostname" {
+    type    = string
+    default = "repo.forge.asipsante.fr"
 }
 
 variable "repo_url" {

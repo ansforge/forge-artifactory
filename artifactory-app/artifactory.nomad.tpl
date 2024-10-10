@@ -34,15 +34,12 @@ job "forge-artifactory" {
         }
 
         network {
-            port "artifactory-http" { to = 8081 }
+            port "artifactory" { to = 8081 }
             port "artifactory-entrypoints" { to = 8082 }
         }
 
         task "artifactory" {
             driver = "docker"
-
-            # log-shipper
-            #leader = true
 
         artifact {
           source = "${repo_url}/artifactory/ext-release-local/org/mariadb/jdbc/mariadb-java-client/2.7.1/mariadb-java-client-2.7.1.jar"
@@ -123,7 +120,7 @@ shared:
                                "jenkins.internal:$\u007Battr.unique.network.ip-address\u007D"
                               ]
                 image   = "${image}:${tag}"
-                ports   = ["artifactory-http", "artifactory-entrypoints"]
+                ports   = ["artifactory","artifactory-entrypoints"]
                 volumes = ["name=forge-artifactory-data,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
 
@@ -161,14 +158,14 @@ shared:
                 name = "$\u007BNOMAD_JOB_NAME\u007D"
                 tags = ["urlprefix-artifactory.internal/"
                        ]
-                port = "artifactory-http"
+                port = "artifactory"
                 check {
                     name     = "alive"
                     type     = "tcp"
                     interval = "120s" #60s
                     timeout  = "5m" #10s
                     failures_before_critical = 10 #5
-                    port     = "artifactory-http"
+                    port     = "artifactory"
                 }
             }
 
