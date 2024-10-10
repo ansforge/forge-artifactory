@@ -35,7 +35,7 @@ job "forge-artifactory" {
 
         network {
             port "artifactory-http" { to = 8081 }
-            port "artifactory-entrypoints" { 8082 = 8082 }
+            port "artifactory-entrypoints" { static = 8082 }
         }
 
         task "artifactory" {
