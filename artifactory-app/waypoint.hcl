@@ -28,6 +28,7 @@ app "forge/artifactory-app" {
             image   = var.image
             tag     = var.tag
             datacenter = var.datacenter
+			repo_url = var.repo_url
             })
         }
     }
@@ -49,3 +50,7 @@ variable "tag" {
     default = "7.90.13"
 }
 
+variable "repo_url" {
+    type    = string
+    default = "http://repo.proxy-dev-forge.asip.hst.fluxus.net"
+}
