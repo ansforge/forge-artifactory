@@ -104,8 +104,8 @@ shared:
 {{range service ( "forge-artifactory-mariadb") }}
         url: jdbc:mariadb://{{.Address}}:{{.Port}}/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true&useSSL=false&useMysqlMetadata=true
 {{end}}
-        username: artifactory
-        password: Password
+        username: {{ with secret "forge/artifactory" }}{{ .Data.data.psql_username }}{{ end }}
+        password: {{ with secret "forge/artifactory" }}{{ .Data.data.psql_password }}{{ end }}
 
                 EOH
             }
