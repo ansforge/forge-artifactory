@@ -151,8 +151,7 @@ shared:
             
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D"
-                #tags = ["urlprefix-artifactory.internal/"
-                       ]
+                #tags = ["urlprefix-artifactory.internal/"]
                 port = "artifactory"
                 check {
                     name     = "alive"
