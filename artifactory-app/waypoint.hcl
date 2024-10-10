@@ -28,6 +28,7 @@ app "forge/artifactory-app" {
             tag     = var.tag
             image   = var.image
             datacenter = var.datacenter
+            external_url_artifactory_hostname = var.external_url_artifactory_hostname
             repo_url = var.repo_url
             })
         }
@@ -47,6 +48,11 @@ variable "image" {
 variable "tag" {
     type    = string
     default = "7.63.14"
+}
+
+variable "external_url_artifactory_hostname" {
+    type    = string
+    default = "repo.forge.asipsante.fr"
 }
 
 variable "repo_url" {

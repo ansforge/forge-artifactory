@@ -1,22 +1,17 @@
-job "forge-artifactory" {
+job "forge-artifactory-app" {
     datacenters = ["${datacenter}"]
     type = "service"
 
     update {
-        # max_parallel      = 3
         health_check      = "checks"
         min_healthy_time  = "10s"
         healthy_deadline  = "10m"
         progress_deadline = "15m"
-        # auto_revert       = true
-        # auto_promote      = true
-        # canary            = 1
-        # stagger           = "30s"
     }
 
     vault {
         policies = ["forge","smtp"]
-        change_mode = "restart"
+        change_mode = "noop"
     }
     group "artifactory" {
         count ="1"
@@ -50,7 +45,7 @@ job "forge-artifactory" {
 
             template {
                 destination = "secrets/system.yaml"
-                change_mode = "restart"
+                change_mode = "noop"
                 perms = "777"
                 uid = 1030
                 gid = 1030
@@ -109,16 +104,13 @@ shared:
 {{range service ( "forge-artifactory-mariadb") }}
         url: jdbc:mariadb://{{.Address}}:{{.Port}}/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true&useSSL=false&useMysqlMetadata=true
 {{end}}
-        username: artifactory
-        password: Password
+        username: {{ with secret "forge/artifactory" }}{{ .Data.data.psql_username }}{{ end }}
+        password: {{ with secret "forge/artifactory" }}{{ .Data.data.psql_password }}{{ end }}
 
                 EOH
             }
 
             config {
-                extra_hosts = [ "artifactory.db.internal:$\u007Battr.unique.network.ip-address\u007D",
-                               "jenkins.internal:$\u007Battr.unique.network.ip-address\u007D"
-                              ]
                 image   = "${image}:${tag}"
                 ports   = ["artifactory","artifactory-entrypoints"]
                 volumes = ["name=forge-artifactory-data,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
@@ -156,8 +148,6 @@ shared:
             
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D"
-                tags = ["urlprefix-artifactory.internal/"
-                       ]
                 port = "artifactory"
                 check {
                     name     = "alive"
@@ -171,7 +161,8 @@ shared:
 
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D-ep"
-                tags = ["urlprefix-artifactory.internal.ep/"
+                tags = ["urlprefix-${external_url_artifactory_hostname}/",
+                        "urlprefix-artifactory.internal/"
                        ]
                 port = "artifactory-entrypoints"
                 check {

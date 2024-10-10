@@ -38,7 +38,7 @@ job "forge-artifactory-nginx" {
 
             template {
                 data = <<EOH
-ART_BASE_URL="http://{{ range service "forge-artifactory-ep" }}{{ .Address }}:{{ .Port }}{{ end }}"
+ART_BASE_URL="http://{{ range service "forge-artifactory-app-ep" }}{{ .Address }}:{{ .Port }}{{ end }}"
 NGINX_LOG_ROTATE_COUNT=7
 NGINX_LOG_ROTATE_SIZE=5M
 SSL=false
@@ -83,7 +83,7 @@ server {
     proxy_read_timeout  900;
     proxy_pass_header   Server;
     proxy_cookie_path   ~*^/.* /;
-    proxy_pass          http://{{ range service "forge-artifactory-ep" }}{{ .Address }}:{{ .Port }}{{ end }};
+    proxy_pass          http://{{ range service "forge-artifactory-app-ep" }}{{ .Address }}:{{ .Port }}{{ end }};
     proxy_set_header    X-JFrog-Override-Base-Url $http_x_forwarded_proto://$host:$server_port;
     proxy_set_header    X-Forwarded-Port  $server_port;
     proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
@@ -93,11 +93,11 @@ server {
 
     if ($http_content_type = "application/grpc") {
         ## if tls is disabled in access, use 'grpc' protocol
-        grpc_pass grpcs://{{ range service "forge-artifactory-ep" }}{{ .Address }}:{{ .Port }}{{ end }};
+        grpc_pass grpcs://{{ range service "forge-artifactory-app-ep" }}{{ .Address }}:{{ .Port }}{{ end }};
     }
 
     location ~ ^/artifactory/ {
-        proxy_pass    http://{{ range service "forge-artifactory" }}{{ .Address }}:{{ .Port }}{{ end }};
+        proxy_pass    http://{{ range service "forge-artifactory-app" }}{{ .Address }}:{{ .Port }}{{ end }};
     }
   }
 }
@@ -107,7 +107,6 @@ server {
             config {
                 image   = "${image}:${tag}"
                 ports   = ["artifactory-nginx-http","artifactory-nginx-https"]
-                extra_hosts = ["artifactory.internal artifactory.internal.ep:$\u007Battr.unique.network.ip-address\u007D"]
                 volumes = ["name=forge-artifactory-nginx-data,io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
                 volume_driver = "pxd"
 
@@ -129,7 +128,7 @@ server {
 
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D"
-                tags = ["urlprefix-artifactory.nginx/"
+                tags = ["urlprefix-rp.artifactory.internal/"
                        ]
                 port = "artifactory-nginx-http"
                 check {
