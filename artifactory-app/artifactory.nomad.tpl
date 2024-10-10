@@ -168,7 +168,7 @@ shared:
                                "jenkins.internal:$\u007Battr.unique.network.ip-address\u007D"
                               ]
                 image   = "${image}:${tag}"
-                ports   = ["artifactory-http", "artifactory-entrypoints"]
+                ports   = ["artifactory-http"]
                 volumes = ["name=forge-artifactory-data,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
 
