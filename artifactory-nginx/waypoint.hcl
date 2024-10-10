@@ -7,7 +7,7 @@ runner {
     data_source "git" {
         url  = "https://github.com/ansforge/forge-artifactory.git"
         ref  = "var.datacenter"
-        path = "artifactory-app"
+        path = "artifactory-nginx"
         ignore_changes_outside_path = true
     }
 }
@@ -24,10 +24,12 @@ app "forge/artifactory-app" {
 
     deploy{
         use "nomad-jobspec" {
-            jobspec = templatefile("${path.app}/artifactory.nomad.tpl", {
-            image   = var.image
+            jobspec = templatefile("${path.app}/artifactory-nginx.nomad.tpl", {
             tag     = var.tag
+			image_nginx = var.image_nginx
             datacenter = var.datacenter
+            external_url_artifactory_hostname = var.external_url_artifactory_hostname
+            repo_url = var.repo_url
             })
         }
     }
@@ -38,14 +40,23 @@ variable "datacenter" {
     default = "test"
 }
 
-variable "image" {
-    type    = string
-    default = "artifactory-pro"
-}
 
+variable "image_nginx" {
+    type    = string
+    default = "jfrog/nginx-artifactory-pro"
+}
 
 variable "tag" {
     type    = string
-    default = "7.90.13"
+    default = "7.63.14"
 }
 
+variable "external_url_artifactory_hostname" {
+    type    = string
+    default = "repo.forge.asipsante.fr"
+}
+
+variable "repo_url" {
+    type    = string
+    default = "http://repo.proxy-dev-forge.asip.hst.fluxus.net"
+}
