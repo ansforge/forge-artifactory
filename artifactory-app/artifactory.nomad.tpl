@@ -46,7 +46,6 @@ job "forge-artifactory" {
             template {
                 data = <<EOH
 
-ART_BASE_URL="http://localhost:8082"
 NGINX_LOG_ROTATE_COUNT=7
 NGINX_LOG_ROTATE_SIZE=5M
 SSL=true
@@ -63,6 +62,10 @@ EOH
                 ports   = ["artifactory-nginx-http","artifactory-nginx-https"]
                 volumes = ["name=forge-artifactory-nginx-data,io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
                 volume_driver = "pxd"
+            }
+
+            env {
+                ART_BASE_URL="http://$\u007BNOMAD_HOST_ADDR_artifactory-entrypoints\u007D"
             }
 
             resources {
