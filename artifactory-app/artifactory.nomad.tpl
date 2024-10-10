@@ -55,14 +55,6 @@ job "forge-artifactory" {
                 memory = 2048
             }
 
-            env {
-                ART_BASE_URL = "http://localhost:8082"
-                NGINX_LOG_ROTATE_COUNT = 7
-                NGINX_LOG_ROTATE_SIZE = 5M
-                SSL = true
-                TZ = "Europe/Paris"
-            }
-
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D-nginx"
                 tags = ["urlprefix-artifactory.nginx/"
