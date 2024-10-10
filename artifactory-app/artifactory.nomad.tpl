@@ -45,7 +45,7 @@ job "forge-artifactory-app" {
 
             template {
                 destination = "secrets/system.yaml"
-                change_mode = "restart"
+                change_mode = "noop"
                 perms = "777"
                 uid = 1030
                 gid = 1030
