@@ -174,6 +174,8 @@ shared:
 
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D-ep"
+                tags = ["urlprefix-artifactory.internal.ep/"
+                       ]
                 port = "artifactory-entrypoints"
                 check {
                     name     = "alive"
