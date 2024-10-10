@@ -52,17 +52,6 @@ job "forge-artifactory" {
        }
 
             template {
-                data = <<EOH
-
-JF_ROUTER_ENTRYPOINTS_EXTERNALPORT="$${NOMAD_PORT_artifactory-entrypoints}"
-TZ="Europe/Paris"
-EOH
-                destination = "secrets/file.env"
-                change_mode = "restart"
-                env = true
-            }
-
-            template {
                 destination = "secrets/system.yaml"
                 change_mode = "restart"
                 perms = "777"
@@ -157,6 +146,10 @@ shared:
                   }
               }
 
+            }
+
+            env {
+               JF_ROUTER_ENTRYPOINTS_EXTERNALPORT = "$\u007BNOMAD_PORT_artifactory-entrypoints\u007D"
             }
 
             resources {
