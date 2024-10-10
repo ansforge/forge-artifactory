@@ -1,4 +1,4 @@
-project = "forge/artifactory"
+project = "forge/artifactory-nginx"
 
 labels = { "domaine" = "forge" }
 
