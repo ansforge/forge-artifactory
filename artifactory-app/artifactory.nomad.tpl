@@ -90,7 +90,7 @@ server {
     proxy_read_timeout  900;
     proxy_pass_header   Server;
     proxy_cookie_path   ~*^/.* /;
-    proxy_pass          http://( print (env "NOMAD_HOST_ADDR_artifactory-entrypoints"));
+    proxy_pass          http://artifactory.internal.ep;
     proxy_set_header    X-JFrog-Override-Base-Url $http_x_forwarded_proto://$host:$server_port;
     proxy_set_header    X-Forwarded-Port  $server_port;
     proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
@@ -100,11 +100,11 @@ server {
 
     if ($http_content_type = "application/grpc") {
         ## if tls is disabled in access, use 'grpc' protocol
-        grpc_pass grpcs://( print (env "NOMAD_HOST_ADDR_artifactory-entrypoints"));
+        grpc_pass grpcs://artifactory.internal.ep;
     }
 
     location ~ ^/artifactory/ {
-        proxy_pass    http://( print (env "NOMAD_HOST_ADDR_artifactory"));
+        proxy_pass    http://artifactory.internal;
     }
   }
 }
@@ -114,6 +114,7 @@ server {
             config {
                 image   = "${image_nginx}:${tag}"
                 ports   = ["artifactory-nginx-http","artifactory-nginx-https"]
+                extra_hosts = ["artifactory.internal artifactory.internal.ep:$\u007Battr.unique.network.ip-address\u007D"]
                 volumes = ["name=forge-artifactory-nginx-data,io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
                 volume_driver = "pxd"
 
