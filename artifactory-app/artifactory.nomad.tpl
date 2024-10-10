@@ -149,7 +149,6 @@ shared:
             }
 
             env {
-               #JF_ROUTER_ENTRYPOINTS_EXTERNALPORT = "$\u007BNOMAD_HOST_PORT_artifactory-entrypoints\u007D"
                JF_ROUTER_ENTRYPOINTS_EXTERNALPORT = "8082"
             }
 
