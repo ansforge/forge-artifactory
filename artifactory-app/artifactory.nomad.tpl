@@ -57,11 +57,75 @@ EOH
                 env = true
             }
 
+            template {
+                destination = "secrets/artifactory.conf"
+                change_mode = "restart"
+                perms = "755"
+                uid = 104
+                gid = 107
+                data = <<EOH
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+ssl_certificate  /var/opt/jfrog/nginx/ssl/example.crt;
+ssl_certificate_key  /var/opt/jfrog/nginx/ssl/example.key;
+ssl_session_cache shared:SSL:1m;
+ssl_prefer_server_ciphers   on;
+## server configuration
+server {
+  listen 443 ssl;
+  listen 80 ;
+  server_name ~(?<repo>.+)\.artifactory artifactory;
+
+  if ($http_x_forwarded_proto = '') {
+    set $http_x_forwarded_proto  $scheme;
+  }
+  ## Application specific logs
+  ## access_log /var/log/nginx/artifactory-access.log timing;
+  ## error_log /var/log/nginx/artifactory-error.log;
+  if ( $repo != "" ){
+    rewrite ^/(v1|v2)/(.*) /artifactory/api/docker/$repo/$1/$2;
+  }
+  chunked_transfer_encoding on;
+  client_max_body_size 0;
+  location / {
+    proxy_read_timeout  900;
+    proxy_pass_header   Server;
+    proxy_cookie_path   ~*^/.* /;
+    proxy_pass          http://( print (env "NOMAD_HOST_ADDR_artifactory-entrypoints"));
+    proxy_set_header    X-JFrog-Override-Base-Url $http_x_forwarded_proto://$host:$server_port;
+    proxy_set_header    X-Forwarded-Port  $server_port;
+    proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
+    proxy_set_header    Host              $http_host;
+    proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+    add_header Strict-Transport-Security always;
+
+    if ($http_content_type = "application/grpc") {
+        ## if tls is disabled in access, use 'grpc' protocol
+        grpc_pass grpcs://( print (env "NOMAD_HOST_ADDR_artifactory-entrypoints"));
+    }
+
+    location ~ ^/artifactory/ {
+        proxy_pass    http://( print (env "NOMAD_HOST_ADDR_artifactory"));
+    }
+  }
+}
+                EOH
+            }
+
             config {
                 image   = "${image_nginx}:${tag}"
                 ports   = ["artifactory-nginx-http","artifactory-nginx-https"]
                 volumes = ["name=forge-artifactory-nginx-data,io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
                 volume_driver = "pxd"
+
+                mount {
+                  type     = "bind"
+                  target   = "/var/opt/jfrog/nginx/conf.d/artifactory.conf"
+                  source   = "secrets/artifactory.conf"
+                  readonly = false
+                  bind_options {
+                    propagation = "rshared"
+                   }
+                }
             }
 
             env {
