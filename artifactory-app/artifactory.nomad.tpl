@@ -56,7 +56,7 @@ job "forge-artifactory" {
             }
 
             env {
-                ART_BASE_URL=http://localhost:8082
+                ART_BASE_URL="http://localhost:8082"
                 NGINX_LOG_ROTATE_COUNT=7
                 NGINX_LOG_ROTATE_SIZE=5M
                 SSL=true
