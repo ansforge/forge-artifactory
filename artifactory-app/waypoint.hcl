@@ -25,10 +25,9 @@ app "forge/artifactory-app" {
     deploy{
         use "nomad-jobspec" {
             jobspec = templatefile("${path.app}/artifactory.nomad.tpl", {
-            image   = var.image
             tag     = var.tag
             datacenter = var.datacenter
-			repo_url = var.repo_url
+            repo_url = var.repo_url
             })
         }
     }
@@ -39,15 +38,14 @@ variable "datacenter" {
     default = "test"
 }
 
-variable "image" {
+variable "image_nginx" {
     type    = string
-    default = "artifactory-pro"
+    default = "jfrog/nginx-artifactory-pro"
 }
-
 
 variable "tag" {
     type    = string
-    default = "7.90.13"
+    default = "7.63.14"
 }
 
 variable "repo_url" {
