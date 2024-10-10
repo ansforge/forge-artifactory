@@ -34,29 +34,18 @@ job "forge-artifactory" {
         }
 
         network {
-            port "artifactory-http" { to = 8081 }
+            port "artifactory" { to = 8081 }
             port "artifactory-entrypoints" { to = 8082 }
+            port "artifactory-nginx-http" { to = 80 }
+            port "artifactory-nginx-https" { to = 443 }
         }
 
         task "nginx" {
             driver = "docker"
 
-            template {
-                data = <<EOH
-ART_BASE_URL=http://localhost:8082
-NGINX_LOG_ROTATE_COUNT=7
-NGINX_LOG_ROTATE_SIZE=5M
-SSL=true
-TZ="Europe/Paris"
-EOH
-                destination = "secrets/file.env"
-                change_mode = "restart"
-                env = true
-            }
-
             config {
                 image   = "${image_nginx}:${tag}"
-                ports   = ["artifactory-entrypoints"]
+                ports   = ["artifactory-nginx-http","artifactory-nginx-https"]
                 volumes = ["name=forge-artifactory-nginx-data,io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
                 volume_driver = "pxd"
             }
@@ -66,18 +55,26 @@ EOH
                 memory = 2048
             }
 
+            env {
+                ART_BASE_URL=http://localhost:8082
+                NGINX_LOG_ROTATE_COUNT=7
+                NGINX_LOG_ROTATE_SIZE=5M
+                SSL=true
+                TZ="Europe/Paris"
+            }
+
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D-nginx"
-                tags = ["urlprefix-artifactory.internal.ep/"
+                tags = ["urlprefix-artifactory.nginx/"
                        ]
-                port = "artifactory-entrypoints"
+                port = "artifactory-nginx-http"
                 check {
                     name     = "alive"
                     type     = "tcp"
                     interval = "120s" #60s
                     timeout  = "5m" #10s
                     failures_before_critical = 10 #5
-                    port     = "artifactory-entrypoints"
+                    port     = "artifactory-nginx-http"
                 }
             }
             
@@ -169,7 +166,7 @@ shared:
                                "jenkins.internal:$\u007Battr.unique.network.ip-address\u007D"
                               ]
                 image   = "${image}:${tag}"
-                ports   = ["artifactory-http","artifactory-entrypoints"]
+                ports   = ["artifactory","artifactory-entrypoints"]
                 volumes = ["name=forge-artifactory-data,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
 
@@ -207,14 +204,29 @@ shared:
                 name = "$\u007BNOMAD_JOB_NAME\u007D"
                 tags = ["urlprefix-artifactory.internal/"
                        ]
-                port = "artifactory-http"
+                port = "artifactory"
                 check {
                     name     = "alive"
                     type     = "tcp"
                     interval = "120s" #60s
                     timeout  = "5m" #10s
                     failures_before_critical = 10 #5
-                    port     = "artifactory-http"
+                    port     = "artifactory"
+                }
+            }
+
+            service {
+                name = "$\u007BNOMAD_JOB_NAME\u007D-ep"
+                tags = ["urlprefix-artifactory.internal.ep/"
+                       ]
+                port = "artifactory-entrypoints"
+                check {
+                    name     = "alive"
+                    type     = "tcp"
+                    interval = "120s" #60s
+                    timeout  = "5m" #10s
+                    failures_before_critical = 10 #5
+                    port     = "artifactory-entrypoints"
                 }
             }
 
