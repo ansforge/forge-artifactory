@@ -16,7 +16,7 @@ app "forge/artifactory-nginx" {
 
     build {
         use "docker-pull" {
-            image = var.image
+            image_nginx = var.image_nginx
             tag   = var.tag
             disable_entrypoint = true
         }
