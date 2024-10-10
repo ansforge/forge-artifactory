@@ -151,7 +151,6 @@ shared:
             
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D"
-                #tags = ["urlprefix-artifactory.internal/"]
                 port = "artifactory"
                 check {
                     name     = "alive"
@@ -166,7 +165,7 @@ shared:
             service {
                 name = "$\u007BNOMAD_JOB_NAME\u007D-ep"
                 tags = ["urlprefix-${external_url_artifactory_hostname}/",
-                        "urlprefix-artifactory.internal.ep/"
+                        "urlprefix-artifactory.internal/"
                        ]
                 port = "artifactory-entrypoints"
                 check {
