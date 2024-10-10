@@ -12,7 +12,7 @@ runner {
     }
 }
 
-app "forge/artifactory-app" {
+app "forge/artifactory-nginx" {
 
     build {
         use "docker-pull" {
@@ -26,7 +26,7 @@ app "forge/artifactory-app" {
         use "nomad-jobspec" {
             jobspec = templatefile("${path.app}/artifactory-nginx.nomad.tpl", {
             tag     = var.tag
-			image_nginx = var.image_nginx
+	    image_nginx = var.image_nginx
             datacenter = var.datacenter
             external_url_artifactory_hostname = var.external_url_artifactory_hostname
             repo_url = var.repo_url
