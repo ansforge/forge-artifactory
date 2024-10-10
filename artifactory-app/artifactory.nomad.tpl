@@ -90,7 +90,7 @@ server {
     proxy_read_timeout  900;
     proxy_pass_header   Server;
     proxy_cookie_path   ~*^/.* /;
-    proxy_pass          http://artifactory.internal.ep;
+    proxy_pass          http://{{ range service "forge-artifactory-ep" }}{{ .Address }}{{ end }};
     proxy_set_header    X-JFrog-Override-Base-Url $http_x_forwarded_proto://$host:$server_port;
     proxy_set_header    X-Forwarded-Port  $server_port;
     proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
@@ -100,11 +100,11 @@ server {
 
     if ($http_content_type = "application/grpc") {
         ## if tls is disabled in access, use 'grpc' protocol
-        grpc_pass grpcs://artifactory.internal.ep;
+        grpc_pass grpcs://{{ range service "forge-artifactory-ep" }}{{ .Address }}{{ end }};
     }
 
     location ~ ^/artifactory/ {
-        proxy_pass    http://artifactory.internal;
+        proxy_pass    http://{{ range service "forge-artifactory" }}{{ .Address }}{{ end }};
     }
   }
 }
