@@ -172,6 +172,19 @@ shared:
                 }
             }
 
+            service {
+                name = "$\u007BNOMAD_JOB_NAME\u007D-ep"
+                port = "artifactory-entrypoints"
+                check {
+                    name     = "alive"
+                    type     = "tcp"
+                    interval = "120s" #60s
+                    timeout  = "5m" #10s
+                    failures_before_critical = 10 #5
+                    port     = "artifactory-entrypoints"
+                }
+            }
+
         }
 
        # log-shipper
