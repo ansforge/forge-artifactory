@@ -38,6 +38,51 @@ job "forge-artifactory" {
             port "artifactory-entrypoints" { to = 8082 }
         }
 
+        task "nginx" {
+            driver = "docker"
+
+            template {
+                data = <<EOH
+ART_BASE_URL=http://localhost:8082
+NGINX_LOG_ROTATE_COUNT=7
+NGINX_LOG_ROTATE_SIZE=5M
+SSL=true
+TZ="Europe/Paris"
+EOH
+                destination = "secrets/file.env"
+                change_mode = "restart"
+                env = true
+            }
+
+            config {
+                image   = "${image_nginx}:${tag}"
+                ports   = ["artifactory-entrypoints"]
+                volumes = ["name=forge-artifactory-nginx-data,io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
+                volume_driver = "pxd"
+            }
+
+            resources {
+                cpu    = 1000
+                memory = 2048
+            }
+            
+            service {
+                name = "$\u007BNOMAD_JOB_NAME\u007D"
+                tags = ["urlprefix-${external_url_artifactory_hostname}/"
+                       ]
+                port = "artifactory-entrypoints"
+                check {
+                    name     = "alive"
+                    type     = "tcp"
+                    interval = "120s" #60s
+                    timeout  = "5m" #10s
+                    failures_before_critical = 10 #5
+                    port     = "artifactory-entrypoints"
+                }
+            }
+        }
+
+
         task "artifactory" {
             driver = "docker"
 
