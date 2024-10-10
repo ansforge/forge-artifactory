@@ -43,6 +43,21 @@ job "forge-artifactory" {
         task "nginx" {
             driver = "docker"
 
+            template {
+                data = <<EOH
+
+ART_BASE_URL="http://localhost:8082"
+NGINX_LOG_ROTATE_COUNT=7
+NGINX_LOG_ROTATE_SIZE=5M
+SSL=true
+TZ="Europe/Paris"
+
+EOH
+                destination = "secrets/file.env"
+                change_mode = "restart"
+                env = true
+            }
+
             config {
                 image   = "${image_nginx}:${tag}"
                 ports   = ["artifactory-nginx-http","artifactory-nginx-https"]
