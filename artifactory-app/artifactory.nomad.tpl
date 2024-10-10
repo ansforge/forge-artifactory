@@ -111,9 +111,6 @@ shared:
             }
 
             config {
-                extra_hosts = [ "artifactory.db.internal:$\u007Battr.unique.network.ip-address\u007D",
-                               "jenkins.internal:$\u007Battr.unique.network.ip-address\u007D"
-                              ]
                 image   = "${image}:${tag}"
                 ports   = ["artifactory","artifactory-entrypoints"]
                 volumes = ["name=forge-artifactory-data,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
