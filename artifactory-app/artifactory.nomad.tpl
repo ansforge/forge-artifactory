@@ -64,6 +64,8 @@ EOH
             template {
                 destination = "secrets/system.yaml"
                 change_mode = "restart"
+                perms = "777"
+                uid = 1030
                 data = <<EOH
 ## @formatter:off
 ## JFROG ARTIFACTORY SYSTEM CONFIGURATION FILE
