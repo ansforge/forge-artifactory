@@ -23,7 +23,7 @@ job "forge-artifactory" {
         
         restart {
             attempts = 3
-            delay = "60s"
+            delay = "180s"
             interval = "1h"
             mode = "fail"
         }
