@@ -105,7 +105,7 @@ server {
             }
 
             config {
-                image   = "${image_nginx}:${tag}"
+                image   = "${image}:${tag}"
                 ports   = ["artifactory-nginx-http","artifactory-nginx-https"]
                 extra_hosts = ["artifactory.internal artifactory.internal.ep:$\u007Battr.unique.network.ip-address\u007D"]
                 volumes = ["name=forge-artifactory-nginx-data,io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
