@@ -36,7 +36,7 @@ job "forge-artifactory-app" {
         volume "artifactory-filestore" {
           type = "csi"
           read_only = false
-          source = "nfs-artifactory"
+          source = "nfs"
           attachment_mode = "file-system"
           access_mode = "multi-node-multi-writer"
         }
