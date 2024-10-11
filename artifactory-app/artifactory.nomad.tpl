@@ -132,7 +132,7 @@ shared:
                 uid = 1030
                 gid = 1030
                 data = <<EOH
-{ with secret "forge/artifactory" }}{{ .Data.data.masterkey }}{{ end }}
+{{ with secret "forge/artifactory" }}{{ .Data.data.masterkey }}{{ end }}
                 EOH
             }
 
