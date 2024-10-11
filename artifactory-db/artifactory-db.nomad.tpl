@@ -55,8 +55,8 @@ MYSQL_PASSWORD="{{ .Data.data.psql_password }}"
             }
             
             resources {
-                cpu    = 500
-                memory = 1024
+                cpu    = 1000
+                memory = 4096
             }
             
             service {
