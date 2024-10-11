@@ -125,6 +125,17 @@ shared:
                 EOH
             }
 
+            template {
+                destination = "secrets/master.key"
+                change_mode = "noop"
+                perms = "777"
+                uid = 1030
+                gid = 1030
+                data = <<EOH
+{ with secret "forge/artifactory" }}{{ .Data.data.masterkey }}{{ end }}
+                EOH
+            }
+
             config {
                 image   = "${image}:${tag}"
                 ports   = ["artifactory","artifactory-entrypoints"]
@@ -135,6 +146,16 @@ shared:
                   type     = "bind"
                   target   = "/opt/jfrog/artifactory/var/etc/system.yaml"
                   source   = "secrets/system.yaml"
+                  readonly = false
+                  bind_options {
+                    propagation = "rshared"
+                   }
+                }
+
+                mount {
+                  type     = "bind"
+                  target   = "/opt/jfrog/artifactory/var/etc/security/master.key"
+                  source   = "secrets/master.key"
                   readonly = false
                   bind_options {
                     propagation = "rshared"
