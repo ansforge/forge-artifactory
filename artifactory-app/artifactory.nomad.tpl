@@ -33,15 +33,30 @@ job "forge-artifactory-app" {
             port "artifactory-entrypoints" { to = 8082 }
         }
 
+        volume "artifactory-filestore" {
+          type = "csi"
+          read_only = false
+          source = "nfs-artifactory"
+          attachment_mode = "file-system"
+          access_mode = "multi-node-multi-writer"
+        }
+
         task "artifactory" {
+
+            volume_mount {
+              volume = "artifactory-filestore"
+              destination = "/var/opt/jfrog/artifactory/data/artifactory/filestore"
+              read_only = false
+            }
+
             driver = "docker"
 
-        artifact {
-          source = "${repo_url}/artifactory/ext-release-local/org/mariadb/jdbc/mariadb-java-client/2.7.1/mariadb-java-client-2.7.1.jar"
-          options {
-            archive = false
-          }
-       }
+            artifact {
+              source = "${repo_url}/artifactory/ext-release-local/org/mariadb/jdbc/mariadb-java-client/2.7.1/mariadb-java-client-2.7.1.jar"
+              options {
+                archive = false
+              }
+           }
 
             template {
                 destination = "secrets/system.yaml"
