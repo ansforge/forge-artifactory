@@ -29,7 +29,6 @@ app "forge/artifactory-nginx" {
 	    image = var.image
             datacenter = var.datacenter
             external_url_artifactory_hostname = var.external_url_artifactory_hostname
-            repo_url = var.repo_url
             })
         }
     }
@@ -54,9 +53,4 @@ variable "tag" {
 variable "external_url_artifactory_hostname" {
     type    = string
     default = "repo.forge.asipsante.fr"
-}
-
-variable "repo_url" {
-    type    = string
-    default = "http://repo.proxy-dev-forge.asip.hst.fluxus.net"
 }
