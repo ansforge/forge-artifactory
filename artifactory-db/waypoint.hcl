@@ -1,4 +1,4 @@
-project = "${workspace.name}" # exemple : dev-forge-artifactory
+project = "${workspace.name}" # exemple : forge-artifactory-dev
 
 labels = { "domaine" = "forge" }
 
