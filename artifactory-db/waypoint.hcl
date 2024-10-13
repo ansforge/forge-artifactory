@@ -19,7 +19,6 @@ app "artifactory-db" {
         use "docker-ref" {
             image = var.image
             tag   = var.tag
-            disable_entrypoint = true
         }
     }
   
