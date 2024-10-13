@@ -41,6 +41,7 @@ job "${nomad_namespace}-app" {
           source = "nfs"
           attachment_mode = "file-system"
           access_mode = "single-node-writer"   #"multi-node-multi-writer"
+          per_alloc = false
           
         }
 
