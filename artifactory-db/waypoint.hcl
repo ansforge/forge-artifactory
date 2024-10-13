@@ -26,18 +26,18 @@ app "artifactory-db" {
         use "nomad-jobspec" {
             jobspec = templatefile("${path.app}/artifactory-db.nomad.tpl", {
             
-			datacenter = var.datacenter           
-			nomad_namespace  = var.nomad_namespace
+	    datacenter = var.datacenter           
+	    nomad_namespace  = var.nomad_namespace
             vault_acl_policy_name     = var.vault_acl_policy_name
             vault_secrets_engine_name = var.vault_secrets_engine_name
 			
-			image   = var.image
+	    image   = var.image
             tag     = var.tag
-			db_ressource_cpu = var.db_ressource_cpu
-			db_ressource_mem = var.db_ressource_mem
+	    db_ressource_cpu = var.db_ressource_cpu
+	    db_ressource_mem = var.db_ressource_mem
 			
-			log_shipper_image = var.log_shipper_image
-			log_shipper_tag   = var.log_shipper_tag
+	    log_shipper_image = var.log_shipper_image
+	    log_shipper_tag   = var.log_shipper_tag
             })
         }
     }
