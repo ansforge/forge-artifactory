@@ -150,7 +150,7 @@ shared:
 
             config {
                 image   = "${image}:${tag}"
-                ports   = ["artifactory","artifactory-entrypoints"]
+                ports   = ["artifactory-svc","artifactory-entrypoints"]
                 volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=50,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
 
@@ -206,14 +206,14 @@ shared:
             
             service {
                 name = "$${NOMAD_JOB_NAME}-svc"
-                port = "artifactory"
+                port = "artifactory-svc"
                 check {
                     name     = "alive"
                     type     = "tcp"
                     interval = "120s" #60s
                     timeout  = "5m" #10s
                     failures_before_critical = 10 #5
-                    port     = "artifactory"
+                    port     = "artifactory-svc"
                 }
             }
 
