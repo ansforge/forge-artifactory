@@ -40,9 +40,7 @@ job "${nomad_namespace}-app" {
           read_only = false
           source = "nfs"
           attachment_mode = "file-system"
-          access_mode = "single-node-writer"   #"multi-node-multi-writer"
-          per_alloc = false
-          
+          access_mode = "multi-node-multi-writer"        
         }
 
         task "artifactory" {
