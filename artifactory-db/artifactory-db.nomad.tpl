@@ -19,7 +19,7 @@ job "${nomad_namespace}-db" {
         }
         
         constraint {
-            attribute = "$\u007Bnode.class\u007D"
+            attribute = "$${node.class}"
             value     = "data"
         }
 
