@@ -11,7 +11,7 @@ job "forge-artifactory-app" {
 
     vault {
         policies = ["forge","smtp"]
-        change_mode = "noop"
+        change_mode = "restart"
     }
     group "artifactory" {
         count ="1"
@@ -33,22 +33,35 @@ job "forge-artifactory-app" {
             port "artifactory-entrypoints" { to = 8082 }
         }
 
+        volume "artifactory-filestore" {
+          type = "csi"
+          read_only = false
+          source = "nfs"
+          attachment_mode = "file-system"
+          access_mode = "multi-node-multi-writer"
+        }
+
         task "artifactory" {
+
+            volume_mount {
+              volume = "artifactory-filestore"
+              destination = "/var/opt/jfrog/artifactory/data/artifactory/filestore"
+              read_only = false
+            }
+
             driver = "docker"
 
-        artifact {
-          source = "${repo_url}/artifactory/ext-release-local/org/mariadb/jdbc/mariadb-java-client/2.7.1/mariadb-java-client-2.7.1.jar"
-          options {
-            archive = false
-          }
-       }
+            artifact {
+              source = "${repo_url}/artifactory/ext-release-local/org/mariadb/jdbc/mariadb-java-client/2.7.1/mariadb-java-client-2.7.1.jar"
+              options {
+                archive = false
+              }
+           }
 
             template {
                 destination = "secrets/system.yaml"
                 change_mode = "noop"
                 perms = "777"
-                uid = 1030
-                gid = 1030
                 data = <<EOH
 ## @formatter:off
 ## JFROG ARTIFACTORY SYSTEM CONFIGURATION FILE
@@ -110,16 +123,59 @@ shared:
                 EOH
             }
 
+            template {
+                destination = "secrets/master.key"
+                change_mode = "noop"
+                perms = "777"
+                data = <<EOH
+{{ with secret "forge/artifactory" }}{{ .Data.data.masterkey }}{{ end }}
+                EOH
+            }
+
+            template {
+                destination = "secrets/binarystore.xml"
+                change_mode = "noop"
+                perms = "777"
+                data = <<EOH
+<config version="1">
+    <chain template="file-system"/>
+    <provider id="file-system" type="file-system">
+        <baseDataDir>/var/opt/jfrog/artifactory/data/artifactory</baseDataDir>
+    </provider>
+</config>
+                EOH
+            }
+
             config {
                 image   = "${image}:${tag}"
                 ports   = ["artifactory","artifactory-entrypoints"]
-                volumes = ["name=forge-artifactory-data,io_priority=high,size=5,repl=2:/var/opt/jfrog/artifactory"]
+                volumes = ["name=forge-artifactory-data,io_priority=high,size=50,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
 
                 mount {
                   type     = "bind"
                   target   = "/opt/jfrog/artifactory/var/etc/system.yaml"
                   source   = "secrets/system.yaml"
+                  readonly = false
+                  bind_options {
+                    propagation = "rshared"
+                   }
+                }
+
+                mount {
+                  type     = "bind"
+                  target   = "/opt/jfrog/artifactory/var/etc/security/master.key"
+                  source   = "secrets/master.key"
+                  readonly = false
+                  bind_options {
+                    propagation = "rshared"
+                   }
+                }
+
+                mount {
+                  type     = "bind"
+                  target   = "/opt/jfrog/artifactory/var/etc/artifactory/binarystore.xml"
+                  source   = "secrets/binarystore.xml"
                   readonly = false
                   bind_options {
                     propagation = "rshared"
