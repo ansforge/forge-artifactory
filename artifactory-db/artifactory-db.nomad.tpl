@@ -1,11 +1,14 @@
-job "forge-artifactory-mariadb" {
+job "${nomad_namespace}-db" {
     datacenters = ["${datacenter}"]
+	namespace   = "${nomad_namespace}"
+	
     type = "service"
+	
     vault {
-        policies = ["forge"]
+        policies = ["${vault_acl_policy_name}"]
         change_mode = "restart"
     }
-    group "artifactory-mariadb" {
+    group "artifactory-db" {
         count ="1"
         
         restart {
@@ -16,7 +19,7 @@ job "forge-artifactory-mariadb" {
         }
         
         constraint {
-            attribute = "$\u007Bnode.class\u007D"
+            attribute = "$${node.class}"
             value     = "data"
         }
 
@@ -33,7 +36,7 @@ job "forge-artifactory-mariadb" {
             template {
                 data = <<EOH
 
-{{ with secret "forge/artifactory" }}
+{{ with secret "${vault_secrets_engine_name}" }}
 MYSQL_ROOT_PASSWORD="{{ .Data.data.root_password }}"
 MYSQL_DB="{{ .Data.data.db_name }}"
 MYSQL_USER="{{ .Data.data.psql_username }}"
@@ -50,17 +53,17 @@ MYSQL_PASSWORD="{{ .Data.data.psql_password }}"
                 image   = "${image}:${tag}"
                 command = "--max_allowed_packet=8M --innodb_buffer_pool_size=1536M --tmp_table_size=512M --max_heap_table_size=512M --innodb_log_file_size=256M --innodb_log_buffer_size=4M"
                 ports   = ["mariadb"]
-                volumes = ["name=forge-artifactory-db,io_priority=high,size=2,repl=2:/var/lib/mysql"]
+                volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=20,repl=2:/var/lib/mysql"]
                 volume_driver = "pxd"
             }
             
             resources {
-                cpu    = 1000
-                memory = 4096
+                cpu    = ${db_ressource_cpu}
+                memory = ${db_ressource_mem}
             }
             
             service {
-                name = "$\u007BNOMAD_JOB_NAME\u007D"
+                name = "$${NOMAD_JOB_NAME}"
                 port = "mariadb"
                 tags = ["urlprefix-:3307 proto=tcp"]
                 check {
@@ -83,23 +86,23 @@ MYSQL_PASSWORD="{{ .Data.data.psql_password }}"
                     mode     = "delay"
             }
             meta {
-                INSTANCE = "$\u007BNOMAD_ALLOC_NAME\u007D"
+                INSTANCE = "$${NOMAD_ALLOC_NAME}"
             }
             template {
                 data = <<EOH
 REDIS_HOSTS = {{ range service "PileELK-redis" }}{{ .Address }}:{{ .Port }}{{ end }}
-PILE_ELK_APPLICATION = ARTIFACTORY 
+PILE_ELK_APPLICATION = ${nomad_namespace}
 EOH
                 destination = "local/file.env"
                 change_mode = "restart"
                 env = true
             }
             config {
-                image = "ans/nomad-filebeat:8.2.3-2.1"
+                image = "${log_shipper_image}:${log_shipper_tag}"
             }
             resources {
-                cpu    = 50
-                memory = 100
+                cpu    = 100
+                memory = 150
             }
         } #end log-shipper 
 

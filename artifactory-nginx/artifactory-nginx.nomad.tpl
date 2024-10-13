@@ -1,5 +1,7 @@
-job "forge-artifactory-nginx" {
+job "${nomad_namespace}-rp" {
     datacenters = ["${datacenter}"]
+	namespace   = "${nomad_namespace}"
+	
     type = "service"
 
     update {
@@ -10,10 +12,10 @@ job "forge-artifactory-nginx" {
     }
 
     vault {
-        policies = ["forge","smtp"]
+        policies = ["${vault_acl_policy_name}","smtp"]
         change_mode = "restart"
     }
-    group "artifactory-nginx" {
+    group "artifactory-rp" {
         count ="1"
         
         restart {
@@ -24,13 +26,13 @@ job "forge-artifactory-nginx" {
         }
         
         constraint {
-            attribute = "$\u007Bnode.class\u007D"
+            attribute = "$${node.class}"
             value     = "data"
         }
 
         network {
-            port "artifactory-nginx-http" { to = 80 }
-            port "artifactory-nginx-https" { to = 443 }
+            port "artifactory-rp-http" { to = 80 }
+            port "artifactory-rp-https" { to = 443 }
         }
 
         task "nginx" {
@@ -38,7 +40,7 @@ job "forge-artifactory-nginx" {
 
             template {
                 data = <<EOH
-ART_BASE_URL="http://{{ range service "forge-artifactory-app-ep" }}{{ .Address }}:{{ .Port }}{{ end }}"
+ART_BASE_URL="http://{{range service ( print (env "NOMAD_NAMESPACE") "-app-ep") }}{{ .Address }}:{{ .Port }}{{ end }}"
 NGINX_LOG_ROTATE_COUNT=7
 NGINX_LOG_ROTATE_SIZE=5M
 SSL=false
@@ -54,8 +56,6 @@ EOH
                 destination = "secrets/artifactory.conf"
                 change_mode = "restart"
                 perms = "755"
-                uid = 104
-                gid = 107
                 data = <<EOH
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
 ssl_certificate  /var/opt/jfrog/nginx/ssl/example.crt;
@@ -83,7 +83,7 @@ server {
     proxy_read_timeout  900;
     proxy_pass_header   Server;
     proxy_cookie_path   ~*^/.* /;
-    proxy_pass          http://{{ range service "forge-artifactory-app-ep" }}{{ .Address }}:{{ .Port }}{{ end }};
+    proxy_pass          http://{{range service ( print (env "NOMAD_NAMESPACE") "-app-ep") }}{{ .Address }}:{{ .Port }}{{ end }};
     proxy_set_header    X-JFrog-Override-Base-Url $http_x_forwarded_proto://$host:$server_port;
     proxy_set_header    X-Forwarded-Port  $server_port;
     proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
@@ -93,11 +93,11 @@ server {
 
     if ($http_content_type = "application/grpc") {
         ## if tls is disabled in access, use 'grpc' protocol
-        grpc_pass grpcs://{{ range service "forge-artifactory-app-ep" }}{{ .Address }}:{{ .Port }}{{ end }};
+        grpc_pass grpcs://{{range service ( print (env "NOMAD_NAMESPACE") "-app-ep") }}{{ .Address }}:{{ .Port }}{{ end }};
     }
 
     location ~ ^/artifactory/ {
-        proxy_pass    http://{{ range service "forge-artifactory-app" }}{{ .Address }}:{{ .Port }}{{ end }};
+        proxy_pass    http://{{range service ( print (env "NOMAD_NAMESPACE") "-app-svc") }}{{ .Address }}:{{ .Port }}{{ end }};
     }
   }
 }
@@ -106,8 +106,8 @@ server {
 
             config {
                 image   = "${image}:${tag}"
-                ports   = ["artifactory-nginx-http","artifactory-nginx-https"]
-                volumes = ["name=forge-artifactory-nginx-data,io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
+                ports   = ["artifactory-rp-http","artifactory-rp-https"]
+                volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
                 volume_driver = "pxd"
 
                 mount {
@@ -122,22 +122,22 @@ server {
             }
 
             resources {
-                cpu    = 1000
-                memory = 2048
+                cpu    = ${rp_ressource_cpu}
+                memory = ${rp_ressource_mem}
             }
 
             service {
-                name = "$\u007BNOMAD_JOB_NAME\u007D"
+                name = "$${NOMAD_JOB_NAME}"
                 tags = ["urlprefix-rp.artifactory.internal/"
                        ]
-                port = "artifactory-nginx-http"
+                port = "artifactory-rp-http"
                 check {
                     name     = "alive"
                     type     = "tcp"
-                    interval = "120s" #60s
-                    timeout  = "5m" #10s
-                    failures_before_critical = 10 #5
-                    port     = "artifactory-nginx-http"
+                    interval = "60s"
+                    timeout  = "10s"
+                    failures_before_critical = 5
+                    port     = "artifactory-rp-http"
                 }
             }
             
@@ -153,19 +153,19 @@ server {
                     mode     = "delay"
             }
             meta {
-                INSTANCE = "$\u007BNOMAD_ALLOC_NAME\u007D"
+                INSTANCE = "$${NOMAD_ALLOC_NAME}"
             }
             template {
                 data = <<EOH
 REDIS_HOSTS = {{ range service "PileELK-redis" }}{{ .Address }}:{{ .Port }}{{ end }}
-PILE_ELK_APPLICATION = ARTIFACTORY 
+PILE_ELK_APPLICATION = ${nomad_namespace} 
 EOH
                 destination = "local/file.env"
                 change_mode = "restart"
                 env = true
             }
             config {
-                image = "ans/nomad-filebeat:8.2.3-2.1"
+                image = "${log_shipper_image}:${log_shipper_tag}"
             }
             resources {
                 cpu    = 50

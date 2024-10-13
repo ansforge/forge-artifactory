@@ -1,5 +1,7 @@
-job "forge-artifactory-app" {
+job "${nomad_namespace}-app" {
     datacenters = ["${datacenter}"]
+	namespace   = "${nomad_namespace}"
+	
     type = "service"
 
     update {
@@ -10,10 +12,10 @@ job "forge-artifactory-app" {
     }
 
     vault {
-        policies = ["forge","smtp"]
+        policies = ["${vault_acl_policy_name}","smtp"]
         change_mode = "restart"
     }
-    group "artifactory" {
+    group "artifactory-app" {
         count ="1"
         
         restart {
@@ -24,12 +26,12 @@ job "forge-artifactory-app" {
         }
         
         constraint {
-            attribute = "$\u007Bnode.class\u007D"
+            attribute = "$${node.class}"
             value     = "data"
         }
 
         network {
-            port "artifactory" { to = 8081 }
+            port "artifactory-svc" { to = 8081 }
             port "artifactory-entrypoints" { to = 8082 }
         }
 
@@ -38,7 +40,7 @@ job "forge-artifactory-app" {
           read_only = false
           source = "nfs"
           attachment_mode = "file-system"
-          access_mode = "multi-node-multi-writer"
+          access_mode = "multi-node-multi-writer"        
         }
 
         task "artifactory" {
@@ -114,11 +116,11 @@ shared:
         ## Default Embedded derby
 
         driver: org.mariadb.jdbc.Driver
-{{range service ( "forge-artifactory-mariadb") }}
-        url: jdbc:mariadb://{{.Address}}:{{.Port}}/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true&useSSL=false&useMysqlMetadata=true
-{{end}}
-        username: {{ with secret "forge/artifactory" }}{{ .Data.data.psql_username }}{{ end }}
-        password: {{ with secret "forge/artifactory" }}{{ .Data.data.psql_password }}{{ end }}
+
+        url: jdbc:mariadb://{{range service ( print (env "NOMAD_NAMESPACE") "-db") }}{{.Address}}:{{.Port}}{{end}}/{{with secret "${vault_secrets_engine_name}"}}{{ .Data.data.db_name }}{{ end }}?characterEncoding=UTF-8&elideSetAutoCommits=true&useSSL=false&useMysqlMetadata=true
+
+        username: {{with secret "${vault_secrets_engine_name}"}}{{ .Data.data.psql_username }}{{ end }}
+        password: {{with secret "${vault_secrets_engine_name}"}}{{ .Data.data.psql_password }}{{ end }}
 
                 EOH
             }
@@ -128,7 +130,7 @@ shared:
                 change_mode = "noop"
                 perms = "777"
                 data = <<EOH
-{{ with secret "forge/artifactory" }}{{ .Data.data.masterkey }}{{ end }}
+{{with secret "${vault_secrets_engine_name}"}}{{ .Data.data.masterkey }}{{ end }}
                 EOH
             }
 
@@ -148,8 +150,8 @@ shared:
 
             config {
                 image   = "${image}:${tag}"
-                ports   = ["artifactory","artifactory-entrypoints"]
-                volumes = ["name=forge-artifactory-data,io_priority=high,size=50,repl=2:/var/opt/jfrog/artifactory"]
+                ports   = ["artifactory-svc","artifactory-entrypoints"]
+                volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=50,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
 
                 mount {
@@ -198,25 +200,25 @@ shared:
             }
 
             resources {
-                cpu    = 500
-                memory = 4096
+                cpu    = ${app_ressource_cpu}
+                memory = ${app_ressource_mem}
             }
             
             service {
-                name = "$\u007BNOMAD_JOB_NAME\u007D"
-                port = "artifactory"
+                name = "$${NOMAD_JOB_NAME}-svc"
+                port = "artifactory-svc"
                 check {
                     name     = "alive"
                     type     = "tcp"
                     interval = "120s" #60s
                     timeout  = "5m" #10s
                     failures_before_critical = 10 #5
-                    port     = "artifactory"
+                    port     = "artifactory-svc"
                 }
             }
 
             service {
-                name = "$\u007BNOMAD_JOB_NAME\u007D-ep"
+                name = "$${NOMAD_JOB_NAME}-ep"
                 tags = ["urlprefix-${external_url_artifactory_hostname}/",
                         "urlprefix-artifactory.internal/"
                        ]
@@ -243,19 +245,19 @@ shared:
                     mode     = "delay"
             }
             meta {
-                INSTANCE = "$\u007BNOMAD_ALLOC_NAME\u007D"
+                INSTANCE = "$${NOMAD_ALLOC_NAME}"
             }
             template {
                 data = <<EOH
 REDIS_HOSTS = {{ range service "PileELK-redis" }}{{ .Address }}:{{ .Port }}{{ end }}
-PILE_ELK_APPLICATION = ARTIFACTORY 
+PILE_ELK_APPLICATION = ${nomad_namespace}
 EOH
                 destination = "local/file.env"
                 change_mode = "restart"
                 env = true
             }
             config {
-                image = "ans/nomad-filebeat:8.2.3-2.1"
+                image = "${log_shipper_image}:${log_shipper_tag}"
             }
             resources {
                 cpu    = 50
