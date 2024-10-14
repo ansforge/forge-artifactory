@@ -51,39 +51,15 @@ MYSQL_PASSWORD="{{ .Data.data.psql_password }}"
 			
             template {
                 data = <<EOH
-# MariaDB database server configuration file.
-#
-# You can copy this file to one of:
-# - "/etc/mysql/my.cnf" to set global options,
-# - "~/.my.cnf" to set user-specific options.
-# 
-# One can use all long options that the program supports.
-# Run program with --help to get a list of available options and with
-# --print-defaults to see which it would actually understand and use.
-#
-# For explanations see
-# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
-
-# This will be passed to all mysql clients
-# It has been reported that passwords should be enclosed with ticks/quotes
-# escpecially if they contain "#" chars...
-# Remember to edit /etc/mysql/debian.cnf when changing the socket location.
 [client]
 port            = 3306
 socket          = /var/run/mysqld/mysqld.sock
 
-# Here is entries for some specific programs
-# The following values assume you have at least 32M ram
-
-# This was formally known as [safe_mysqld]. Both versions are currently parsed.
 [mysqld_safe]
 socket          = /var/run/mysqld/mysqld.sock
 nice            = 0
 
 [mysqld]
-#
-# * Basic Settings
-#
 #user           = mysql
 pid-file        = /var/run/mysqld/mysqld.pid
 socket          = /var/run/mysqld/mysqld.sock
@@ -93,7 +69,7 @@ datadir         = /var/lib/mysql
 tmpdir          = /tmp
 lc_messages_dir = /usr/share/mysql
 lc_messages     = en_US
-##skip-external-locking
+skip-external-locking
 #
 # Instead of skip-networking the default is now to listen only on
 # localhost which is more compatible and is not less secure.
