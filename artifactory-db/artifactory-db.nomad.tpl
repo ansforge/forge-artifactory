@@ -244,6 +244,7 @@ key_buffer              = 16M
                 EOH
                 destination = "secrets/my.cnf"
                 change_mode = "restart"
+                perms = "755"
                 env = false
             }
 
