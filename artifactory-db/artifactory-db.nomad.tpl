@@ -50,7 +50,7 @@ MYSQL_PASSWORD="{{ .Data.data.psql_password }}"
             }
 			
             template {
-                data = <<EOH
+                data = <<EOF
 [client]
 port            = 3306
 socket          = /var/run/mysqld/mysqld.sock
@@ -217,7 +217,7 @@ key_buffer              = 16M
 #
 !includedir /etc/mysql/conf.d/
 # 
-                EOH
+                EOF
                 destination = "secrets/my.cnf"
                 change_mode = "restart"
                 perms = "755"
