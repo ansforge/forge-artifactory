@@ -55,11 +55,11 @@ MYSQL_PASSWORD="{{ .Data.data.psql_password }}"
 port            = 3306
 socket          = /var/run/mysqld/mysqld.sock
 
-[mysqld_safe]
+{{`[mysqld_safe]`}}
 socket          = /var/run/mysqld/mysqld.sock
 nice            = 0
 
-[mysqld]
+{{`[mysqld]`}}
 #user           = mysql
 pid-file        = /var/run/mysqld/mysqld.pid
 socket          = /var/run/mysqld/mysqld.sock
@@ -183,7 +183,7 @@ innodb_flush_method     = O_DIRECT
 #
 # * Galera-related settings
 #
-[galera]
+{{`[galera]`}}
 # Mandatory settings
 #wsrep_on=ON
 #wsrep_provider=
@@ -200,15 +200,15 @@ innodb_flush_method     = O_DIRECT
 #wsrep_slave_threads=1
 #innodb_flush_log_at_trx_commit=0
 
-[mysqldump]
+{{`[mysqldump]`}}
 quick
 quote-names
 max_allowed_packet      = 16M
 
-[mysql]
+{{`[mysql]`}}
 #no-auto-rehash # faster start of mysql but no tab completion
 
-[isamchk]
+{{`[isamchk]`}}
 key_buffer              = 16M
 
 #
