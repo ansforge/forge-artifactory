@@ -51,15 +51,15 @@ MYSQL_PASSWORD="{{ .Data.data.psql_password }}"
 			
             template {
                 data = <<EOF
-{{`[client]`}}
+$[client]
 port            = 3306
 socket          = /var/run/mysqld/mysqld.sock
 
-{{`[mysqld_safe]`}}
+$[mysqld_safe]
 socket          = /var/run/mysqld/mysqld.sock
 nice            = 0
 
-{{`[mysqld]`}}
+$[mysqld]
 #user           = mysql
 pid-file        = /var/run/mysqld/mysqld.pid
 socket          = /var/run/mysqld/mysqld.sock
