@@ -68,9 +68,9 @@ MYSQL_PASSWORD="{{ .Data.data.psql_password }}"
 # It has been reported that passwords should be enclosed with ticks/quotes
 # escpecially if they contain "#" chars...
 # Remember to edit /etc/mysql/debian.cnf when changing the socket location.
-[client]
-port            = 3306
-socket          = /var/run/mysqld/mysqld.sock
+#[client]
+#port            = 3306
+#socket          = /var/run/mysqld/mysqld.sock
 
 # Here is entries for some specific programs
 # The following values assume you have at least 32M ram
