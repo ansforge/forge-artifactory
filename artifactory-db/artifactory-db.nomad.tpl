@@ -253,15 +253,7 @@ key_buffer              = 16M
                 volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=20,repl=2:/var/lib/mysql"]
                 volume_driver = "pxd"
 				
-                mount {
-                  type     = "bind"
-                  target   = "/etc/mysql/my.cnf"
-                  source   = "secrets/my.cnf"
-                  readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
-                }
+
             }
  				
             resources {
