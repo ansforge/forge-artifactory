@@ -125,7 +125,7 @@ key_buffer              = 16M
                 destination = "secrets/my.cnf"
                 change_mode = "restart"
                 perms = "755"
-                env = true
+                #env = true
             }
 
             config {
