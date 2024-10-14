@@ -74,7 +74,7 @@ variable "image" {
 
 variable "tag" {
     type    = string
-    default = "10.4.8"
+    default = "10.2.33"
 }
 
 variable "backup_cron" {
