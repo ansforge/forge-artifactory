@@ -4,16 +4,16 @@ labels = { "domaine" = "forge" }
 
 runner {
     enabled = true
-	profile = "common-odr"
+    profile = "common-odr"
     data_source "git" {
         url  = "https://github.com/ansforge/forge-artifactory.git"
         ref  = "var.datacenter"
     }
-  poll {
-    # à mettre à true pour déployer automatiquement en cas de changement dans la branche
-    enabled = false
-    # interval = "60s"
-  }
+    poll {
+      # à mettre à true pour déployer automatiquement en cas de changement dans la branche
+      enabled = false
+      # interval = "60s"
+    }
 }
 
 
@@ -30,18 +30,18 @@ app "artifactory-db" {
         use "nomad-jobspec" {
           jobspec = templatefile("${path.app}/artifactory-db.nomad.tpl", {
             
-	      datacenter = var.datacenter           
-	      nomad_namespace = var.nomad_namespace
+	  datacenter = var.datacenter           
+	  nomad_namespace = var.nomad_namespace
           vault_acl_policy_name = var.vault_acl_policy_name
           vault_secrets_engine_name = var.vault_secrets_engine_name
 			
-	      image = var.db_image
+	  image = var.db_image
           tag = var.db_tag
-	      db_ressource_cpu = var.db_ressource_cpu
-	      db_ressource_mem = var.db_ressource_mem
+	  db_ressource_cpu = var.db_ressource_cpu
+	  db_ressource_mem = var.db_ressource_mem
 			
-	      log_shipper_image = var.log_shipper_image
-	      log_shipper_tag = var.log_shipper_tag
+	  log_shipper_image = var.log_shipper_image
+	  log_shipper_tag = var.log_shipper_tag
           })
         }
     }
@@ -60,19 +60,19 @@ app "artifactory-app" {
         use "nomad-jobspec" {
           jobspec = templatefile("${path.app}/artifactory-app.nomad.tpl", {
             datacenter = var.datacenter
-	        nomad_namespace  = var.nomad_namespace
-	        vault_acl_policy_name = var.vault_acl_policy_name
-	        vault_secrets_engine_name = var.vault_secrets_engine_name
+	    nomad_namespace  = var.nomad_namespace
+	    vault_acl_policy_name = var.vault_acl_policy_name
+	    vault_secrets_engine_name = var.vault_secrets_engine_name
 			
-	        image = var.app_image
-	        tag = var.app_tag
+	    image = var.app_image
+	    tag = var.app_tag
             app_ressource_cpu = var.app_ressource_cpu
-	        app_ressource_mem = var.app_ressource_mem            
+	    app_ressource_mem = var.app_ressource_mem            
             external_url_artifactory_hostname = var.external_url_artifactory_hostname
             repo_url = var.repo_url
 			
-	        log_shipper_image = var.log_shipper_image
-	        log_shipper_tag = var.log_shipper_tag
+	    log_shipper_image = var.log_shipper_image
+	    log_shipper_tag = var.log_shipper_tag
           })
         }
     }
@@ -91,17 +91,17 @@ app "artifactory-rp" {
         use "nomad-jobspec" {
           jobspec = templatefile("${path.app}/artifactory-rp.nomad.tpl", {
             datacenter = var.datacenter
-	        nomad_namespace = var.nomad_namespace
-	        vault_acl_policy_name = var.vault_acl_policy_name
-	        vault_secrets_engine_name = var.vault_secrets_engine_name
+	    nomad_namespace = var.nomad_namespace
+	    vault_acl_policy_name = var.vault_acl_policy_name
+	    vault_secrets_engine_name = var.vault_secrets_engine_name
 			
-	        image = var.rp_image
+	    image = var.rp_image
             tag = var.rp_tag
-	        rp_ressource_cpu = var.rp_ressource_cpu
+	    rp_ressource_cpu = var.rp_ressource_cpu
             rp_ressource_mem = var.rp_ressource_mem
 			
-	        log_shipper_image = var.log_shipper_image
-	        log_shipper_tag = var.log_shipper_tag			
+	    log_shipper_image = var.log_shipper_image
+	    log_shipper_tag = var.log_shipper_tag			
           })
         }
     }
@@ -120,18 +120,18 @@ app "artifactory-backup" {
         use "nomad-jobspec" {
           jobspec = templatefile("${path.app}/artifactory-backup.nomad.tpl", {
             datacenter = var.datacenter
-	        nomad_namespace = var.nomad_namespace
-	        vault_acl_policy_name = var.vault_acl_policy_name
-	        vault_secrets_engine_name = var.vault_secrets_engine_name
+	    nomad_namespace = var.nomad_namespace
+	    vault_acl_policy_name = var.vault_acl_policy_name
+	    vault_secrets_engine_name = var.vault_secrets_engine_name
 			
-	        image = var.backup_image
+	    image = var.backup_image
             tag = var.backup_tag
-			backup_db_ressource_cpu = var.backup_db_ressource_cpu
-			backup_db_ressource_mem = var.backup_db_ressource_mem
-			backup_cron = var.backup_cron
+	    backup_db_ressource_cpu = var.backup_db_ressource_cpu
+	    backup_db_ressource_mem = var.backup_db_ressource_mem
+	    backup_cron = var.backup_cron
 			
-	        log_shipper_image = var.log_shipper_image
-	        log_shipper_tag = var.log_shipper_tag			
+	    log_shipper_image = var.log_shipper_image
+	    log_shipper_tag = var.log_shipper_tag			
           })
         }
     }
@@ -140,8 +140,8 @@ app "artifactory-backup" {
 # ${workspace.name} : waypoint workspace name
 
 variable "datacenter" {
-    type    = string
-    default = "test"
+  type    = string
+  default = "test"
 }
 
 variable "nomad_namespace" {
@@ -162,13 +162,13 @@ variable "vault_secrets_engine_name" {
 # --- DB ---
 
 variable "db_image" {
-    type    = string
-    default = "mariadb"
+  type    = string
+  default = "mariadb"
 }
 
 variable "db_tag" {
-    type    = string
-    default = "10.2.33"
+  type    = string
+  default = "10.2.33"
 }
 
 variable "db_ressource_cpu" {
@@ -184,23 +184,23 @@ variable "db_ressource_mem" {
 # --- APP ---
 
 variable "app_image" {
-    type    = string
-    default = "jfrog/artifactory-pro"
+  type    = string
+  default = "jfrog/artifactory-pro"
 }
 
 variable "app_tag" {
-    type    = string
-    default = "7.63.14"
+  type    = string
+  default = "7.63.14"
 }
 
 variable "external_url_artifactory_hostname" {
-    type    = string
-    default = "repo.forge.asipsante.fr"
+  type    = string
+  default = "repo.forge.asipsante.fr"
 }
 
 variable "repo_url" {
-    type    = string
-    default = "http://repo.proxy-dev-forge.asip.hst.fluxus.net"
+  type    = string
+  default = "http://repo.proxy-dev-forge.asip.hst.fluxus.net"
 }
 
 variable "app_ressource_cpu" {
@@ -216,13 +216,13 @@ variable "app_ressource_mem" {
 # --- RP ---   
 
 variable "rp_image" {
-    type    = string
-    default = "jfrog/nginx-artifactory-pro"
+  type    = string
+  default = "jfrog/nginx-artifactory-pro"
 }
 
 variable "rp_tag" {
-    type    = string
-    default = "7.63.14"
+  type    = string
+  default = "7.63.14"
 }
 
 variable "rp_ressource_cpu" {
@@ -238,13 +238,13 @@ variable "rp_ressource_mem" {
 # --- BACKUP ---   
 
 variable "backup_image" {
-    type    = string
-    default = "ans/mariadb-ssh"
+  type    = string
+  default = "ans/mariadb-ssh"
 }
 
 variable "backup_tag" {
-    type    = string
-    default = "10.2.33"
+  type    = string
+  default = "10.2.33"
 }
 
 variable "backup_cron" {
