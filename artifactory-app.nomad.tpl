@@ -38,7 +38,7 @@ job "${nomad_namespace}-app" {
         volume "artifactory-filestore" {
             type = "csi"
             read_only = false
-            source = "nfs"
+            source = "nfs-artifactory"
             attachment_mode = "file-system"
             access_mode = "multi-node-multi-writer"        
         }
@@ -63,7 +63,7 @@ job "${nomad_namespace}-app" {
             template {
                 destination = "secrets/system.yaml"
                 change_mode = "noop"
-                perms = "777"
+                perms = "755"
                 data = <<EOH
 ## @formatter:off
 ## JFROG ARTIFACTORY SYSTEM CONFIGURATION FILE
@@ -128,7 +128,7 @@ shared:
             template {
                 destination = "secrets/master.key"
                 change_mode = "noop"
-                perms = "777"
+                perms = "755"
                 data = <<EOH
 {{with secret "${vault_secrets_engine_name}"}}{{ .Data.data.masterkey }}{{ end }}
                 EOH
@@ -137,7 +137,7 @@ shared:
             template {
                 destination = "secrets/binarystore.xml"
                 change_mode = "noop"
-                perms = "777"
+                perms = "755"
                 data = <<EOH
 <config version="1">
     <chain template="file-system"/>
@@ -219,9 +219,7 @@ shared:
 
             service {
                 name = "$${NOMAD_JOB_NAME}-ep"
-                tags = ["urlprefix-${external_url_artifactory_hostname}/",
-                        "urlprefix-artifactory.internal/"
-                       ]
+                tags = ["urlprefix-${external_url_artifactory_hostname}/"]
                 port = "artifactory-entrypoints"
                 check {
                     name     = "alive"
