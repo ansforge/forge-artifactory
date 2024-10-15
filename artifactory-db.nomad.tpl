@@ -249,7 +249,7 @@ key_buffer              = 16M
             }
 
             config {
-                image   = "${database_image}:${database_tag}"
+                image   = "mariadb:10.2.33"
                 volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=20,repl=2:/var/lib/mysql"]
                 ports   = ["mariadb"]
                 volume_driver = "pxd"
