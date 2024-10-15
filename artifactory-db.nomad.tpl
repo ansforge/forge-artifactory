@@ -1,6 +1,6 @@
 job "${nomad_namespace}-db" {
     datacenters = ["${datacenter}"]
-	namespace   = "${nomad_namespace}"
+    namespace   = "${nomad_namespace}"
 	
     type = "service"
 	
@@ -8,6 +8,7 @@ job "${nomad_namespace}-db" {
         policies = ["${vault_acl_policy_name}"]
         change_mode = "restart"
     }
+
     group "artifactory-db" {
         count ="1"
         
@@ -273,7 +274,7 @@ key_buffer              = 16M
             service {
                 name = "$${NOMAD_JOB_NAME}"
                 port = "mariadb"
-                tags = ["urlprefix-:3307 proto=tcp"]
+                #tags = ["urlprefix-:3307 proto=tcp"]
                 check {
                     name     = "alive"
                     type     = "tcp"
