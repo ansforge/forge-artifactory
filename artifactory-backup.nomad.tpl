@@ -27,7 +27,7 @@ job "${nomad_namespace}-backup" {
       }
 
       config {
-        image   = "${backup_image}:${backup_tag}"
+        image   = "${image}:${tag}"
         command = "bash"
         args    = ["/secrets/backup.sh"]
       }
