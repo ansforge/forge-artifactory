@@ -36,11 +36,11 @@ job "${nomad_namespace}-app" {
         }
 
         volume "artifactory-filestore" {
-          type = "csi"
-          read_only = false
-          source = "nfs"
-          attachment_mode = "file-system"
-          access_mode = "multi-node-multi-writer"        
+            type = "csi"
+            read_only = false
+            source = "nfs"
+            attachment_mode = "file-system"
+            access_mode = "multi-node-multi-writer"        
         }
 
         task "artifactory" {
@@ -149,7 +149,7 @@ shared:
             }
 
             config {
-                image   = "${image}:${tag}"
+                image   = "${app_image}:${app_tag}"
                 ports   = ["artifactory-svc","artifactory-entrypoints"]
                 volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=50,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
