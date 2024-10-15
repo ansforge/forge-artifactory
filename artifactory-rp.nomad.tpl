@@ -105,7 +105,7 @@ server {
             }
 
             config {
-                image   = "${rp_image}:${rp_tag}"
+                image   = "${image}:${tag}"
                 ports   = ["artifactory-rp-http","artifactory-rp-https"]
                 volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=1,repl=2:/var/opt/jfrog/nginx"]
                 volume_driver = "pxd"
