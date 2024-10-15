@@ -63,7 +63,7 @@ job "${nomad_namespace}-app" {
             template {
                 destination = "secrets/system.yaml"
                 change_mode = "noop"
-                perms = "755"
+                perms = "777"
                 data = <<EOH
 ## @formatter:off
 ## JFROG ARTIFACTORY SYSTEM CONFIGURATION FILE
