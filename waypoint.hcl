@@ -9,7 +9,13 @@ runner {
         url  = "https://github.com/ansforge/forge-artifactory.git"
         ref  = "var.datacenter"
     }
+  poll {
+    # à mettre à true pour déployer automatiquement en cas de changement dans la branche
+    enabled = false
+    # interval = "60s"
+  }
 }
+
 
 app "artifactory-db" {
 
