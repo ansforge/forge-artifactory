@@ -149,7 +149,7 @@ shared:
             }
 
             config {
-                image   = "${app_image}:${app_tag}"
+                image   = "${image}:${tag}"
                 ports   = ["artifactory-svc","artifactory-entrypoints"]
                 volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=50,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
