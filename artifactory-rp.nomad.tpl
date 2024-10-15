@@ -1,6 +1,6 @@
 job "${nomad_namespace}-rp" {
     datacenters = ["${datacenter}"]
-	namespace   = "${nomad_namespace}"
+    namespace   = "${nomad_namespace}"
 	
     type = "service"
 
@@ -15,6 +15,7 @@ job "${nomad_namespace}-rp" {
         policies = ["${vault_acl_policy_name}","smtp"]
         change_mode = "restart"
     }
+
     group "artifactory-rp" {
         count ="1"
         
@@ -128,8 +129,7 @@ server {
 
             service {
                 name = "$${NOMAD_JOB_NAME}"
-                tags = ["urlprefix-rp.artifactory.internal/"
-                       ]
+                tags = ["urlprefix-rp.artifactory.internal/"]
                 port = "artifactory-rp-http"
                 check {
                     name     = "alive"
