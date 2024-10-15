@@ -160,8 +160,6 @@ variable "vault_secrets_engine_name" {
   default = "${workspace.name}"
 }
 
-
-
 variable "database_image" {
   type    = string
   default = "mariadb"
