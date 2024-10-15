@@ -21,8 +21,8 @@ app "artifactory-db" {
 
     build {
         use "docker-ref" {
-          image = var.db_image
-          tag   = var.db_tag
+          image = var.database_image
+          tag   = var.database_tag
         }
     }
   
@@ -35,8 +35,8 @@ app "artifactory-db" {
           vault_acl_policy_name = var.vault_acl_policy_name
           vault_secrets_engine_name = var.vault_secrets_engine_name
 			
-	  image = var.db_image
-          tag = var.db_tag
+	  image = var.database_image
+          tag = var.database_tag
 	  db_ressource_cpu = var.db_ressource_cpu
 	  db_ressource_mem = var.db_ressource_mem
 			
@@ -161,7 +161,7 @@ variable "vault_secrets_engine_name" {
 
 # --- DB ---
 
-variable "db_image" {
+variable "database_image" {
   type    = string
   default = "mariadb"
 }
