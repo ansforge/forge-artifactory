@@ -166,7 +166,7 @@ variable "database_image" {
   default = "mariadb"
 }
 
-variable "db_tag" {
+variable "database_tag" {
   type    = string
   default = "10.2.33"
 }
