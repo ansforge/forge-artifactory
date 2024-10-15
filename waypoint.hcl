@@ -124,8 +124,8 @@ app "artifactory-backup" {
 	    vault_acl_policy_name = var.vault_acl_policy_name
 	    vault_secrets_engine_name = var.vault_secrets_engine_name
 			
-	    image = var.image
-            tag = var.image
+	    image = var.backup_image
+            tag = var.backup_tag
 	    backup_db_ressource_cpu = var.backup_db_ressource_cpu
 	    backup_db_ressource_mem = var.backup_db_ressource_mem
 	    backup_cron = var.backup_cron
@@ -236,12 +236,12 @@ variable "rp_ressource_mem" {
 
 # --- BACKUP ---   
 
-variable "image" {
+variable "backup_image" {
   type    = string
   default = "ans/mariadb-ssh"
 }
 
-variable "tag" {
+variable "backup_tag" {
   type    = string
   default = "10.2.33"
 }
