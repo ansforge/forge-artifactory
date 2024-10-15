@@ -142,6 +142,7 @@ app "artifactory-backup" {
 variable "datacenter" {
   type    = string
   default = "test"
+  env     = ["NOMAD_DC"]
 }
 
 variable "nomad_namespace" {
