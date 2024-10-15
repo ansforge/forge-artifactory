@@ -159,7 +159,7 @@ variable "vault_secrets_engine_name" {
   default = "${workspace.name}"
 }
 
-# --- DB ---
+
 
 variable "database_image" {
   type    = string
