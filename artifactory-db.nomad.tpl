@@ -274,7 +274,6 @@ key_buffer              = 16M
             service {
                 name = "$${NOMAD_JOB_NAME}"
                 port = "mariadb"
-                #tags = ["urlprefix-:3307 proto=tcp"]
                 check {
                     name     = "alive"
                     type     = "tcp"
