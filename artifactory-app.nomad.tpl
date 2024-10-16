@@ -1,6 +1,6 @@
 job "${nomad_namespace}-app" {
     datacenters = ["${datacenter}"]
-	namespace   = "${nomad_namespace}"
+    namespace   = "${nomad_namespace}"
 	
     type = "service"
 
