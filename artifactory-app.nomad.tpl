@@ -49,7 +49,7 @@ job "${nomad_namespace}-app" {
             image = "busybox:latest"
             volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=50,repl=2:/var/opt/jfrog/artifactory"]
             command = "sh"
-            args = ["-c", "chown -R 1030:1030 /var/opt/jfrog/artifactory"]
+            args = ["-c", "chown -R 1030:1030 /secrets"]
           }
           resources {
             cpu = 500
