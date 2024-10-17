@@ -43,6 +43,24 @@ job "${nomad_namespace}-app" {
             access_mode = "multi-node-multi-writer"        
         }
 
+        task "prep-disk" {
+          driver = "docker"
+          config {
+            image = "busybox:latest"
+            volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=50,repl=2:/var/opt/jfrog/artifactory"]
+            command = "sh"
+            args = ["-c", "chown -R 1030:1030 /var/opt/jfrog/artifactory"]
+          }
+          resources {
+            cpu = 500
+            memory = 64
+          }
+          lifecycle {
+            hook = "prestart"
+            sidecar = "false"
+          }
+        }
+
         task "artifactory" {
 
             volume_mount {
