@@ -82,7 +82,9 @@ job "${nomad_namespace}-app" {
             template {
                 destination = "secrets/system.yaml"
                 change_mode = "noop"
-                perms = "777"
+                perms = "755"
+                uid = "1030"
+                gid = "1030"
                 data = <<EOH
 ## @formatter:off
 ## JFROG ARTIFACTORY SYSTEM CONFIGURATION FILE
@@ -148,6 +150,8 @@ shared:
                 destination = "secrets/master.key"
                 change_mode = "noop"
                 perms = "755"
+                uid = "1030"
+                gid = "1030"
                 data = <<EOH
 {{with secret "${vault_secrets_engine_name}"}}{{ .Data.data.masterkey }}{{ end }}
                 EOH
@@ -157,6 +161,8 @@ shared:
                 destination = "secrets/binarystore.xml"
                 change_mode = "noop"
                 perms = "755"
+                uid = "1030"
+                gid = "1030"
                 data = <<EOH
 <config version="1">
     <chain template="file-system"/>
