@@ -22,11 +22,6 @@ job "${nomad_namespace}-backup" {
       driver = "docker"
       leader = true
 
-      lifecycle {
-        hook    = "prestart"
-        sidecar = false
-      }
-
       config {
         image   = "${image}:${tag}"
         command = "bash"
