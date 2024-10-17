@@ -20,6 +20,7 @@ job "${nomad_namespace}-backup" {
 
     task "dump-db" {
       driver = "docker"
+      leader = true
 
       lifecycle {
         hook    = "prestart"
