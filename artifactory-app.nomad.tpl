@@ -43,24 +43,6 @@ job "${nomad_namespace}-app" {
             access_mode = "multi-node-multi-writer"        
         }
 
-        task "prep-disk" {
-          driver = "docker"
-          config {
-            image = "busybox:latest"
-            volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=50,repl=2:/var/opt/jfrog/artifactory"]
-            command = "sh"
-            args = ["-c", "chown -R 1030:1030 /secrets"]
-          }
-          resources {
-            cpu = 500
-            memory = 64
-          }
-          lifecycle {
-            hook = "prestart"
-            sidecar = "false"
-          }
-        }
-
         task "artifactory" {
 
             volume_mount {
@@ -82,9 +64,7 @@ job "${nomad_namespace}-app" {
             template {
                 destination = "secrets/system.yaml"
                 change_mode = "noop"
-                perms = "755"
-                uid = 1030
-                gid = 1030
+                perms = "777"
                 data = <<EOH
 ## @formatter:off
 ## JFROG ARTIFACTORY SYSTEM CONFIGURATION FILE
@@ -150,8 +130,6 @@ shared:
                 destination = "secrets/master.key"
                 change_mode = "noop"
                 perms = "755"
-                uid = 1030
-                gid = 1030
                 data = <<EOH
 {{with secret "${vault_secrets_engine_name}"}}{{ .Data.data.masterkey }}{{ end }}
                 EOH
@@ -161,8 +139,6 @@ shared:
                 destination = "secrets/binarystore.xml"
                 change_mode = "noop"
                 perms = "755"
-                uid = 1030
-                gid = 1030
                 data = <<EOH
 <config version="1">
     <chain template="file-system"/>
