@@ -7,7 +7,7 @@ job "${nomad_namespace}-backup" {
 
   periodic {
     cron             = "${backup_cron}"
-    prohibit_overlap = false
+    prohibit_overlap = true
   }
 
   vault {
