@@ -38,6 +38,7 @@ job "${nomad_namespace}-rp" {
 
         task "nginx" {
             driver = "docker"
+            leader = true 
 
             template {
                 data = <<EOH
