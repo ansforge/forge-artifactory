@@ -38,6 +38,25 @@ job "${nomad_namespace}-rp" {
 
         task "nginx" {
             driver = "docker"
+            leader = true 
+
+            template {
+              change_mode = "noop"
+              destination = "/secrets/default.key"
+              perms       = "777"
+              data        = <<EOH
+      {{with secret "${vault_secrets_engine_name}"}}{{.Data.data.rp_private_key}}{{end}}
+              EOH
+            }
+
+            template {
+              change_mode = "noop"
+              destination = "/secrets/default.crt"
+              perms       = "777"
+              data        = <<EOH
+      {{with secret "${vault_secrets_engine_name}"}}{{.Data.data.rp_certificate}}{{end}}
+              EOH
+            }
 
             template {
                 data = <<EOH
@@ -116,10 +135,8 @@ server {
                   target   = "/var/opt/jfrog/nginx/conf.d/artifactory.conf"
                   source   = "secrets/artifactory.conf"
                   readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
                 }
+
             }
 
             resources {
@@ -128,7 +145,7 @@ server {
             }
 
             service {
-                name = "$${NOMAD_JOB_NAME}"
+                name = "$${NOMAD_JOB_NAME}-http"
                 tags = ["urlprefix-rp.artifactory.internal/"]
                 port = "artifactory-rp-http"
                 check {
@@ -138,6 +155,20 @@ server {
                     timeout  = "10s"
                     failures_before_critical = 5
                     port     = "artifactory-rp-http"
+                }
+            }
+
+            service {
+                name = "$${NOMAD_JOB_NAME}-https"
+                #tags = ["urlprefix-rp.artifactory.internal/ proto=https tlsskipverify=true"]
+                port = "artifactory-rp-https"
+                check {
+                    name     = "alive"
+                    type     = "tcp"
+                    interval = "60s"
+                    timeout  = "10s"
+                    failures_before_critical = 5
+                    port     = "artifactory-rp-https"
                 }
             }
             

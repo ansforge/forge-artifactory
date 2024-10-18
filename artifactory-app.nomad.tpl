@@ -1,6 +1,6 @@
 job "${nomad_namespace}-app" {
     datacenters = ["${datacenter}"]
-	namespace   = "${nomad_namespace}"
+    namespace   = "${nomad_namespace}"
 	
     type = "service"
 
@@ -52,6 +52,7 @@ job "${nomad_namespace}-app" {
             }
 
             driver = "docker"
+            leader = true 
 
             artifact {
               source = "${repo_url}/artifactory/ext-release-local/org/mariadb/jdbc/mariadb-java-client/2.7.1/mariadb-java-client-2.7.1.jar"
@@ -151,7 +152,7 @@ shared:
             config {
                 image   = "${image}:${tag}"
                 ports   = ["artifactory-svc","artifactory-entrypoints"]
-                volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=50,repl=2:/var/opt/jfrog/artifactory"]
+                volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=20,repl=2:/var/opt/jfrog/artifactory"]
                 volume_driver = "pxd"
 
                 mount {
@@ -159,9 +160,6 @@ shared:
                   target   = "/opt/jfrog/artifactory/var/etc/system.yaml"
                   source   = "secrets/system.yaml"
                   readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
                 }
 
                 mount {
@@ -169,9 +167,6 @@ shared:
                   target   = "/opt/jfrog/artifactory/var/etc/security/master.key"
                   source   = "secrets/master.key"
                   readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
                 }
 
                 mount {
@@ -179,18 +174,12 @@ shared:
                   target   = "/opt/jfrog/artifactory/var/etc/artifactory/binarystore.xml"
                   source   = "secrets/binarystore.xml"
                   readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
                 }
 
                mount {
                   type   = "bind"
                   target = "/opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mariadb-java-client-2.7.1.jar"
                   source = "local/mariadb-java-client-2.7.1.jar"
-                  bind_options {
-                    propagation = "rshared"
-                  }
               }
 
             }

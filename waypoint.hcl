@@ -177,7 +177,7 @@ variable "db_ressource_cpu" {
 
 variable "db_ressource_mem" {
   type    = number
-  default = 4096
+  default = 2048
 }
 
 # --- APP ---
@@ -226,12 +226,12 @@ variable "rp_tag" {
 
 variable "rp_ressource_cpu" {
   type    = number
-  default = 1000
+  default = 250
 }
 
 variable "rp_ressource_mem" {
   type    = number
-  default = 2048
+  default = 1024
 }
 
 # --- BACKUP ---   

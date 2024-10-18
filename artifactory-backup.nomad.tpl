@@ -20,11 +20,7 @@ job "${nomad_namespace}-backup" {
 
     task "dump-db" {
       driver = "docker"
-
-      lifecycle {
-        hook    = "prestart"
-        sidecar = false
-      }
+      leader = true
 
       config {
         image   = "${image}:${tag}"

@@ -251,7 +251,7 @@ key_buffer              = 16M
 
             config {
                 image   = "${image}:${tag}"
-                volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=20,repl=2:/var/lib/mysql"]
+                volumes = ["name=$${NOMAD_JOB_NAME},io_priority=high,size=10,repl=2:/var/lib/mysql"]
                 ports   = ["mariadb"]
                 volume_driver = "pxd"
                 mount {
@@ -259,9 +259,6 @@ key_buffer              = 16M
                   target   = "/etc/mysql/my.cnf"
                   source   = "secrets/my.cnf"
                   readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
                 }				
 
             }
@@ -274,7 +271,6 @@ key_buffer              = 16M
             service {
                 name = "$${NOMAD_JOB_NAME}"
                 port = "mariadb"
-                #tags = ["urlprefix-:3307 proto=tcp"]
                 check {
                     name     = "alive"
                     type     = "tcp"
