@@ -146,7 +146,7 @@ server {
 
             service {
                 name = "$${NOMAD_JOB_NAME}-http"
-                tags = ["urlprefix-rp.artifactory.internal/"]
+                #tags = ["urlprefix-rp.artifactory.internal/"]
                 port = "artifactory-rp-http"
                 check {
                     name     = "alive"
