@@ -78,8 +78,8 @@ EOH
                 perms = "755"
                 data = <<EOH
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
-ssl_certificate  /secrets/default.crt;
-ssl_certificate_key  /secrets/default.key;
+ssl_certificate  /var/opt/jfrog/nginx/ssl/example.crt;
+ssl_certificate_key  /var/opt/jfrog/nginx/ssl/example.key;
 ssl_session_cache shared:SSL:1m;
 ssl_prefer_server_ciphers   on;
 ## server configuration
