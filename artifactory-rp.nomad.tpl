@@ -140,14 +140,14 @@ server {
                 mount {
                   type     = "bind"
                   target   = "/var/opt/jfrog/nginx/ssl/rp_certificate.crt"
-                  source   = "secrets/rp_certificate"
+                  source   = "secrets/rp_certificate.crt"
                   readonly = false
                 }
 
                 mount {
                   type     = "bind"
                   target   = "/var/opt/jfrog/nginx/ssl/rp_private_key.key"
-                  source   = "secrets/rp_private_key"
+                  source   = "secrets/rp_private_key.key"
                   readonly = false
                 }
             }
