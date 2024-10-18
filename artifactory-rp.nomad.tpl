@@ -41,6 +41,24 @@ job "${nomad_namespace}-rp" {
             leader = true 
 
             template {
+              change_mode = "noop"
+              destination = "/secrets/rp_private_key"
+              perms       = "400"
+              data        = <<EOH
+      {{with secret "${vault_secrets_engine_name}"}}{{.Data.data.rp_private_key}}{{end}}
+              EOH
+            }
+
+            template {
+              change_mode = "noop"
+              destination = "/secrets/rp_certificate"
+              perms       = "400"
+              data        = <<EOH
+      {{with secret "${vault_secrets_engine_name}"}}{{.Data.data.rp_certificate}}{{end}}
+              EOH
+            }
+
+            template {
                 data = <<EOH
 ART_BASE_URL="http://{{range service ( print (env "NOMAD_NAMESPACE") "-app-ep") }}{{ .Address }}:{{ .Port }}{{ end }}"
 NGINX_LOG_ROTATE_COUNT=7
@@ -60,8 +78,8 @@ EOH
                 perms = "755"
                 data = <<EOH
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
-ssl_certificate  /var/opt/jfrog/nginx/ssl/example.crt;
-ssl_certificate_key  /var/opt/jfrog/nginx/ssl/example.key;
+ssl_certificate  /var/opt/jfrog/nginx/ssl/rp_certificate.crt;
+ssl_certificate_key  /var/opt/jfrog/nginx/ssl/rp_private_key.key;
 ssl_session_cache shared:SSL:1m;
 ssl_prefer_server_ciphers   on;
 ## server configuration
@@ -118,6 +136,20 @@ server {
                   source   = "secrets/artifactory.conf"
                   readonly = false
                 }
+
+                mount {
+                  type     = "bind"
+                  target   = "/var/opt/jfrog/nginx/ssl/rp_certificate.crt"
+                  source   = "secrets/rp_certificate"
+                  readonly = false
+                }
+
+                mount {
+                  type     = "bind"
+                  target   = "/var/opt/jfrog/nginx/ssl/rp_private_key.key"
+                  source   = "secrets/rp_private_key"
+                  readonly = false
+                }
             }
 
             resources {
@@ -126,7 +158,7 @@ server {
             }
 
             service {
-                name = "$${NOMAD_JOB_NAME}"
+                name = "$${NOMAD_JOB_NAME}-http"
                 tags = ["urlprefix-rp.artifactory.internal/"]
                 port = "artifactory-rp-http"
                 check {
@@ -136,6 +168,20 @@ server {
                     timeout  = "10s"
                     failures_before_critical = 5
                     port     = "artifactory-rp-http"
+                }
+            }
+
+            service {
+                name = "$${NOMAD_JOB_NAME}-https"
+                tags = ["urlprefix-rp.artifactory.internal/"]
+                port = "artifactory-rp-https"
+                check {
+                    name     = "alive"
+                    type     = "tcp"
+                    interval = "60s"
+                    timeout  = "10s"
+                    failures_before_critical = 5
+                    port     = "artifactory-rp-https"
                 }
             }
             
