@@ -85,7 +85,7 @@ ssl_prefer_server_ciphers   on;
 ## server configuration
 server {
   listen 443 ssl;
-  listen 80 ;
+  #listen 80 ;
   server_name ~(?<repo>.+)\.artifactory artifactory;
 
   if ($http_x_forwarded_proto = '') {
