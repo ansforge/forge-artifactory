@@ -160,7 +160,7 @@ server {
 
             service {
                 name = "$${NOMAD_JOB_NAME}-https"
-                tags = ["urlprefix-rp.artifactory.internal/ proto=https"]
+                tags = ["urlprefix-rp.artifactory.internal/ proto=https tlsskipverify=true"]
                 port = "artifactory-rp-https"
                 check {
                     name     = "alive"
