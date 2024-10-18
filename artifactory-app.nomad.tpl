@@ -207,7 +207,6 @@ shared:
             
             service {
                 name = "$${NOMAD_JOB_NAME}-svc"
-                tags = ["urlprefix-artifactory.internal/"]
                 port = "artifactory-svc"
                 check {
                     name     = "alive"
