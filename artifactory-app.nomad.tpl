@@ -160,9 +160,6 @@ shared:
                   target   = "/opt/jfrog/artifactory/var/etc/system.yaml"
                   source   = "secrets/system.yaml"
                   readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
                 }
 
                 mount {
@@ -170,9 +167,6 @@ shared:
                   target   = "/opt/jfrog/artifactory/var/etc/security/master.key"
                   source   = "secrets/master.key"
                   readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
                 }
 
                 mount {
@@ -180,18 +174,12 @@ shared:
                   target   = "/opt/jfrog/artifactory/var/etc/artifactory/binarystore.xml"
                   source   = "secrets/binarystore.xml"
                   readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
                 }
 
                mount {
                   type   = "bind"
                   target = "/opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mariadb-java-client-2.7.1.jar"
                   source = "local/mariadb-java-client-2.7.1.jar"
-                  bind_options {
-                    propagation = "rshared"
-                  }
               }
 
             }
