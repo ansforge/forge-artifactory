@@ -85,7 +85,7 @@ ssl_prefer_server_ciphers   on;
 ## server configuration
 server {
   listen 443 ssl;
-  #listen 80 ;
+  listen 80 ;
   server_name ~(?<repo>.+)\.artifactory artifactory;
 
   if ($http_x_forwarded_proto = '') {
@@ -146,7 +146,7 @@ server {
 
             service {
                 name = "$${NOMAD_JOB_NAME}-http"
-                #tags = ["urlprefix-artifactory.internal/"]
+                tags = ["urlprefix-artifactory.internal/"]
                 port = "artifactory-rp-http"
                 check {
                     name     = "alive"
@@ -160,7 +160,7 @@ server {
 
             service {
                 name = "$${NOMAD_JOB_NAME}-https"
-                tags = ["urlprefix-rp.artifactory.internal/ proto=https tlsskipverify=true"]
+                #tags = ["urlprefix-rp.artifactory.internal/ proto=https tlsskipverify=true"]
                 port = "artifactory-rp-https"
                 check {
                     name     = "alive"
