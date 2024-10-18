@@ -42,7 +42,7 @@ job "${nomad_namespace}-rp" {
 
             template {
               change_mode = "noop"
-              destination = "/secrets/rp_private_key"
+              destination = "/secrets/rp_private_key.key"
               perms       = "400"
               data        = <<EOH
       {{with secret "${vault_secrets_engine_name}"}}{{.Data.data.rp_private_key}}{{end}}
@@ -51,7 +51,7 @@ job "${nomad_namespace}-rp" {
 
             template {
               change_mode = "noop"
-              destination = "/secrets/rp_certificate"
+              destination = "/secrets/rp_certificate.crt"
               perms       = "400"
               data        = <<EOH
       {{with secret "${vault_secrets_engine_name}"}}{{.Data.data.rp_certificate}}{{end}}
@@ -78,8 +78,8 @@ EOH
                 perms = "755"
                 data = <<EOH
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
-ssl_certificate  /var/opt/jfrog/nginx/ssl/rp_certificate.crt;
-ssl_certificate_key  /var/opt/jfrog/nginx/ssl/rp_private_key.key;
+ssl_certificate  /secrets/rp_certificate.crt;
+ssl_certificate_key  /secrets/rp_private_key.key;
 ssl_session_cache shared:SSL:1m;
 ssl_prefer_server_ciphers   on;
 ## server configuration
