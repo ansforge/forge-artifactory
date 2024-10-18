@@ -43,7 +43,7 @@ job "${nomad_namespace}-rp" {
             template {
               change_mode = "noop"
               destination = "/secrets/default.key"
-              perms       = "444"
+              perms       = "777"
               data        = <<EOH
       {{with secret "${vault_secrets_engine_name}"}}{{.Data.data.rp_private_key}}{{end}}
               EOH
