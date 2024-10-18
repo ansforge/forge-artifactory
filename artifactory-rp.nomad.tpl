@@ -52,7 +52,7 @@ job "${nomad_namespace}-rp" {
             template {
               change_mode = "noop"
               destination = "/secrets/rp_certificate.crt"
-              perms       = "400"
+              perms       = "644"
               data        = <<EOH
       {{with secret "${vault_secrets_engine_name}"}}{{.Data.data.rp_certificate}}{{end}}
               EOH
