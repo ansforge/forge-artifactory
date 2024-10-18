@@ -117,9 +117,9 @@ server {
                   target   = "/var/opt/jfrog/nginx/conf.d/artifactory.conf"
                   source   = "secrets/artifactory.conf"
                   readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
+                  #bind_options {
+                  #  propagation = "rshared"
+                  # }
                 }
             }
 
