@@ -259,9 +259,6 @@ key_buffer              = 16M
                   target   = "/etc/mysql/my.cnf"
                   source   = "secrets/my.cnf"
                   readonly = false
-                  bind_options {
-                    propagation = "rshared"
-                   }
                 }				
 
             }
