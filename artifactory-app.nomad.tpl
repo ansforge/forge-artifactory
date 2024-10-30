@@ -157,28 +157,28 @@ shared:
 
                 mount {
                   type     = "bind"
-                  target   = "/var/opt/jfrog/artifactory/var/etc/system.yaml"
+                  target   = "/opt/jfrog/artifactory/var/etc/system.yaml"
                   source   = "secrets/system.yaml"
                   readonly = false
                 }
 
                 mount {
                   type     = "bind"
-                  target   = "/var/opt/jfrog/artifactory/var/etc/security/master.key"
+                  target   = "/opt/jfrog/artifactory/var/etc/security/master.key"
                   source   = "secrets/master.key"
                   readonly = false
                 }
 
                 mount {
                   type     = "bind"
-                  target   = "/var/opt/jfrog/artifactory/var/etc/artifactory/binarystore.xml"
+                  target   = "/opt/jfrog/artifactory/var/etc/artifactory/binarystore.xml"
                   source   = "secrets/binarystore.xml"
                   readonly = false
                 }
 
                mount {
                   type   = "bind"
-                  target = "/var/opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mariadb-java-client-2.7.1.jar"
+                  target = "/opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mariadb-java-client-2.7.1.jar"
                   source = "local/mariadb-java-client-2.7.1.jar"
               }
 
