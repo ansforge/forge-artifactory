@@ -83,8 +83,8 @@ SSH_USER={{.Data.data.ssh_user}}
 {{end}}
 
 # Generation du backup de la config
-echo -e "Generation du backup de la config : "
-scp -r root@$${APP_IP}:/var/lib/osd/mounts/forge-artifactory-app/etc/  $${DUMP_DIR}/backupconf/
+echo -e "Generation du backup de la config : scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r root@$${APP_IP}:/var/lib/osd/mounts/forge-artifactory-app/etc/  $${DUMP_DIR}/"
+scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r root@$${APP_IP}:/var/lib/osd/mounts/forge-artifactory-app/etc/  $${DUMP_DIR}/
 
 # Generation du DUMP de la base
 echo -e "Generation du dump de la base :
