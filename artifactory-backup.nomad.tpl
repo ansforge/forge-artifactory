@@ -56,8 +56,8 @@ LOG_DIR="$${HOME_DIR}"
 LOG_FILE="$${NOMAD_ALLOC_DIR}/logs/artifactory_dumpdb$${TODAY}.log"
 TMP_FILE="$${NOMAD_ALLOC_DIR}/tmp/artifactory_dumpdb$${TODAY}.tmp"
 
-DUMP_FILE="mysqldump_artifactory$${TODAY}.sql.gz"
-BACKUP_CONFIG_FILE="backup_conf_artifactory$${TODAY}.tar.gz"
+DUMP_FILE="mysqldump_$${nomad_namespace}$${TODAY}.sql.gz"
+BACKUP_CONFIG_FILE="backup_conf_$${nomad_namespace}$${TODAY}.tar.gz"
 
 # récupère l'address de Mariadb dans Consul
 {{range service ( print (env "NOMAD_NAMESPACE") "-db") }}
@@ -65,8 +65,6 @@ DATABASE_IP={{.Address}}
 DATABASE_PORT={{.Port}}
 {{end}}
 
-
-############  BACKUP CONF #######
 # récupère l'address de la webapp dans Consul
 {{range service ( print (env "NOMAD_NAMESPACE") "-app-ep") }}
 APP_IP={{.Address}}
@@ -87,7 +85,6 @@ SSH_USER={{.Data.data.ssh_user}}
 # Generation du DUMP de la base
 echo -e "Generation du dump de la base :
 mysqldump -v -h $${DATABASE_IP} -P $${DATABASE_PORT} -u $${DATABASE_USER} -p*** $${DATABASE_NAME} | gzip -c >$${DUMP_DIR}/mysqldump_artifactory.sql.gz 2>$${TMP_FILE} ..."
-
 mysqldump -v -h $${DATABASE_IP} -P $${DATABASE_PORT} -u $${DATABASE_USER} -p$${DATABASE_PASSWD} $${DATABASE_NAME} | gzip -c >$${DUMP_DIR}/mysqldump_artifactory.sql.gz 2>$${TMP_FILE}
 
 RET_CODE=$?
@@ -102,7 +99,6 @@ fi
 
 echo -e "Envoyer le dump vers la VM de sauvegarde :
 scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa $${DUMP_DIR}/mysqldump_artifactory.sql.gz $${SSH_USER}@$${BACKUP_SERVER}:$${TARGET_FOLDER}/$${DUMP_FILE}"
-
 scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa $${DUMP_DIR}/mysqldump_artifactory.sql.gz $${SSH_USER}@$${BACKUP_SERVER}:$${TARGET_FOLDER}/$${DUMP_FILE}
 
 RET_CODE=$?
@@ -116,15 +112,26 @@ else
 fi
 
 # Generation du backup de la config
-echo -e "Generation du backup de la config : scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r $${SSH_USER}@$${APP_IP}:/var/lib/osd/mounts/forge-artifactory-app/etc/  $${DUMP_DIR}/"
-scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r $${SSH_USER}@$${APP_IP}:/var/lib/osd/mounts/forge-artifactory-app/etc/  $${DUMP_DIR}/
+echo -e "Generation du backup de la config : scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r $${SSH_USER}@$${APP_IP}:/var/lib/osd/mounts/$${nomad_namespace}-app/etc/  $${DUMP_DIR}/"
+scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r $${SSH_USER}@$${APP_IP}:/var/lib/osd/mounts/$${nomad_namespace}-app/etc/  $${DUMP_DIR}/
+
+RET_CODE=$?
+if [ $${RET_CODE} -ne 0 ]
+then
+    echo -e "[ERROR] - En execution de la commande scp pour sauvegarder la conf artifactory"
+    echo -e "Exit code : $${RET_CODE}"
+    exit 1
+else
+    echo "OK!"
+fi
+
 cd $${DUMP_DIR}/
 tar czvf backup_conf_artifactory.tar.gz etc/
 
 RET_CODE=$?
 if [ $${RET_CODE} -ne 0 ]
 then
-    echo -e "[ERROR] - En execution de la commande scp pour sauvegarder la conf artifactory"
+    echo -e "[ERROR] - En execution de la commande tar pour sauvegarder la conf artifactory"
     echo -e "Exit code : $${RET_CODE}"
     exit 1
 else
