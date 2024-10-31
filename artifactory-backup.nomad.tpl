@@ -56,8 +56,8 @@ LOG_DIR="$${HOME_DIR}"
 LOG_FILE="$${NOMAD_ALLOC_DIR}/logs/artifactory_dumpdb$${TODAY}.log"
 TMP_FILE="$${NOMAD_ALLOC_DIR}/tmp/artifactory_dumpdb$${TODAY}.tmp"
 
-DUMP_FILE="mysqldump_$${nomad_namespace}$${TODAY}.sql.gz"
-BACKUP_CONFIG_FILE="backup_conf_$${nomad_namespace}$${TODAY}.tar.gz"
+DUMP_FILE="mysqldump_$${NOMAD_NAMESPACE}$${TODAY}.sql.gz"
+BACKUP_CONFIG_FILE="backup_conf_$${NOMAD_NAMESPACE}$${TODAY}.tar.gz"
 
 # récupère l'address de Mariadb dans Consul
 {{range service ( print (env "NOMAD_NAMESPACE") "-db") }}
@@ -81,39 +81,9 @@ TARGET_FOLDER={{.Data.data.backup_folder}}
 SSH_USER={{.Data.data.ssh_user}}
 {{end}}
 
-
-# Generation du DUMP de la base
-echo -e "Generation du dump de la base :
-mysqldump -v -h $${DATABASE_IP} -P $${DATABASE_PORT} -u $${DATABASE_USER} -p*** $${DATABASE_NAME} | gzip -c >$${DUMP_DIR}/mysqldump_artifactory.sql.gz 2>$${TMP_FILE} ..."
-mysqldump -v -h $${DATABASE_IP} -P $${DATABASE_PORT} -u $${DATABASE_USER} -p$${DATABASE_PASSWD} $${DATABASE_NAME} | gzip -c >$${DUMP_DIR}/mysqldump_artifactory.sql.gz 2>$${TMP_FILE}
-
-RET_CODE=$?
-if [ $${RET_CODE} -ne 0 ]
-then
-    echo -e "[ERROR] - En execution de la commande mysqldump"
-    echo -e "Exit code : $${RET_CODE}"
-    exit 1
-else
-    echo "OK!"
-fi
-
-echo -e "Envoyer le dump vers la VM de sauvegarde :
-scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa $${DUMP_DIR}/mysqldump_artifactory.sql.gz $${SSH_USER}@$${BACKUP_SERVER}:$${TARGET_FOLDER}/$${DUMP_FILE}"
-scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa $${DUMP_DIR}/mysqldump_artifactory.sql.gz $${SSH_USER}@$${BACKUP_SERVER}:$${TARGET_FOLDER}/$${DUMP_FILE}
-
-RET_CODE=$?
-if [ $${RET_CODE} -ne 0 ]
-then
-    echo -e "[ERROR] - En execution de la commande scp"
-    echo -e "Exit code : $${RET_CODE}"
-    exit 1
-else
-    echo "OK!"
-fi
-
 # Generation du backup de la config
-echo -e "Generation du backup de la config : scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r $${SSH_USER}@$${APP_IP}:/var/lib/osd/mounts/$${nomad_namespace}-app/etc/  $${DUMP_DIR}/"
-scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r $${SSH_USER}@$${APP_IP}:/var/lib/osd/mounts/$${nomad_namespace}-app/etc/  $${DUMP_DIR}/
+echo -e "Generation du backup de la config : scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r $${SSH_USER}@$${APP_IP}:/var/lib/osd/mounts/$${NOMAD_NAMESPACE}-app/etc/  $${DUMP_DIR}/"
+scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r $${SSH_USER}@$${APP_IP}:/var/lib/osd/mounts/$${NOMAD_NAMESPACE}-app/etc/  $${DUMP_DIR}/
 
 RET_CODE=$?
 if [ $${RET_CODE} -ne 0 ]
@@ -153,8 +123,34 @@ else
     echo "OK!"
 fi
 
+# Generation du DUMP de la base
+echo -e "Generation du dump de la base :
+mysqldump -v -h $${DATABASE_IP} -P $${DATABASE_PORT} -u $${DATABASE_USER} -p*** $${DATABASE_NAME} | gzip -c >$${DUMP_DIR}/mysqldump_artifactory.sql.gz 2>$${TMP_FILE} ..."
+mysqldump -v -h $${DATABASE_IP} -P $${DATABASE_PORT} -u $${DATABASE_USER} -p$${DATABASE_PASSWD} $${DATABASE_NAME} | gzip -c >$${DUMP_DIR}/mysqldump_artifactory.sql.gz 2>$${TMP_FILE}
 
+RET_CODE=$?
+if [ $${RET_CODE} -ne 0 ]
+then
+    echo -e "[ERROR] - En execution de la commande mysqldump"
+    echo -e "Exit code : $${RET_CODE}"
+    exit 1
+else
+    echo "OK!"
+fi
 
+echo -e "Envoyer le dump vers la VM de sauvegarde :
+scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa $${DUMP_DIR}/mysqldump_artifactory.sql.gz $${SSH_USER}@$${BACKUP_SERVER}:$${TARGET_FOLDER}/$${DUMP_FILE}"
+scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa $${DUMP_DIR}/mysqldump_artifactory.sql.gz $${SSH_USER}@$${BACKUP_SERVER}:$${TARGET_FOLDER}/$${DUMP_FILE}
+
+RET_CODE=$?
+if [ $${RET_CODE} -ne 0 ]
+then
+    echo -e "[ERROR] - En execution de la commande scp"
+    echo -e "Exit code : $${RET_CODE}"
+    exit 1
+else
+    echo "OK!"
+fi
 
 # Compte rendu du fichier dump cree par le traitement
 echo -e "(Fin du task 'dump-db')"
