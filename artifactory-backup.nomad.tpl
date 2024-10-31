@@ -84,17 +84,6 @@ SSH_USER={{.Data.data.ssh_user}}
 # Generation du backup de la config
 echo -e "Generation du backup de la config : scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r $${SSH_USER}@$${APP_IP}:/var/lib/osd/mounts/$${NOMAD_NAMESPACE}-app/etc/  $${DUMP_DIR}/"
 scp -o StrictHostKeyChecking=accept-new -i /secrets/id_rsa -r $${SSH_USER}@$${APP_IP}:/var/lib/osd/mounts/$${NOMAD_NAMESPACE}-app/etc/  $${DUMP_DIR}/
-
-RET_CODE=$?
-if [ $${RET_CODE} -ne 0 ]
-then
-    echo -e "[ERROR] - En execution de la commande scp pour sauvegarder la conf artifactory"
-    echo -e "Exit code : $${RET_CODE}"
-    exit 1
-else
-    echo "OK!"
-fi
-
 cd $${DUMP_DIR}/
 tar czvf backup_conf_artifactory.tar.gz etc/
 
