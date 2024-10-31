@@ -64,6 +64,14 @@ DATABASE_IP={{.Address}}
 DATABASE_PORT={{.Port}}
 {{end}}
 
+
+############  BACKUP CONF #######
+# récupère l'address de la webapp dans Consul
+{{range service ( print (env "NOMAD_NAMESPACE") "-app-ep") }}
+APP_IP={{.Address}}
+APP_PORT={{.Port}}
+{{end}}
+
 # récupère les secrets dans Vault
 {{with secret "${vault_secrets_engine_name}"}}
 DATABASE_USER={{.Data.data.psql_username}}
@@ -73,6 +81,10 @@ BACKUP_SERVER={{.Data.data.backup_server}}
 TARGET_FOLDER={{.Data.data.backup_folder}}
 SSH_USER={{.Data.data.ssh_user}}
 {{end}}
+
+# Generation du backup de la config
+echo -e "Generation du backup de la config : "
+scp -r root@$${APP_IP}:/var/lib/osd/mounts/forge-artifactory-app/etc/  $${DUMP_DIR}/backupconf/
 
 # Generation du DUMP de la base
 echo -e "Generation du dump de la base :
